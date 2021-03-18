@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include "buffer.h"
 
 #ifndef BIT_TYPES
 
@@ -16,8 +17,8 @@
 
 #endif
 
-int input,
-    Xmax,
+unsigned int input;
+int Xmax,
     Ymax,
     Xwin,
     Ywin,
@@ -29,7 +30,7 @@ void set_statusbar(int Xmax, int Ymax, int x, int y){
 		mvprintw(Ymax-1, i, " ");
 	};
 
-	mvprintw(Ymax-1, Xmax-6, "(%d,%d)", y, x);
+	mvprintw(Ymax-1, Xmax-8, "(%d,%d)", y, x);
 	attroff(A_REVERSE);
 	refresh();
 };
@@ -96,7 +97,9 @@ int main(int argc, char *argv[]){
 					} else{
 						x = Xmax-1;
 					};
+					mvwdelch(window, y, x);
 					wmove(window, y, x);
+					set_statusbar(Xmax, Ymax, x, y);
 				}
 				mvwdelch(window, y, x);
 				set_statusbar(Xmax, Ymax, x, y);
