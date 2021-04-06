@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include "buffer.h"
+#include "buf.h"
 
 #ifndef BIT_TYPES
 
@@ -24,6 +24,8 @@ int Xmax,
     Ywin,
     x, y;
 
+
+void add_new_node(unsigned int input);
 void set_statusbar(int Xmax, int Ymax, int x, int y){
 	attron(A_REVERSE);
 	for(int i = 0; i < Xmax; i++){
@@ -64,6 +66,9 @@ int main(int argc, char *argv[]){
 	x = 0;
 	y = 0;
 
+	struct node *pos = tail;
+	unsigned int pos_count = 0;
+
 	getmaxyx(stdscr, Ymax, Xmax);
 	WINDOW *window = newwin(Ymax-2, Xmax, 1, 0);
 	getmaxyx(window, Ywin, Xwin);
@@ -94,15 +99,29 @@ int main(int argc, char *argv[]){
 					if(y < 0){
 						y = 0;
 						x = 0;
-					} else{
+					} else
 						x = Xmax-1;
-					};
+				}
+				if(tail->prev != NULL){
 					mvwdelch(window, y, x);
-					wmove(window, y, x);
+					struct node *xprev = tail->prev;
+					xprev->next = NULL;
+
+					free(tail);
+					tail = xprev;
+					
+					nodes -= 1;
+					lrefresh(window);
 					set_statusbar(Xmax, Ymax, x, y);
 				}
-				mvwdelch(window, y, x);
-				set_statusbar(Xmax, Ymax, x, y);
+					mvwdelch(window, y, x);
+					struct node *none = tail->prev;
+					free(tail);
+					tail = none;
+
+					nodes -= 1;
+					lrefresh(window);
+					set_statusbar(Xmax, Ymax, x, y);
 				break;
 			case KEY_DOWN:
 				y += 1;
@@ -157,12 +176,15 @@ int main(int argc, char *argv[]){
 				break;
 			default:
 				if(x > Xmax-2){
-					mvwprintw(window, y, x, "%c", ENTER);
+					add_new_node(ENTER);
 					x  = 0;
 					y += 1;
-					mvwprintw(window, y, x, "%c", (char) input);
-				}
-				mvwprintw(window, y, x, "%c", (char) input);
+					add_new_node(input);
+				} else{
+					add_new_node(input);
+				};
+
+				lrefresh(window);
 				x += 1;
 				set_statusbar(Xmax, Ymax, x, y);
 				break;
@@ -173,4 +195,34 @@ int main(int argc, char *argv[]){
 	};
 
 	endwin();
+};
+
+void add_new_node(unsigned int input){				
+		// Adding a new_node to the buffer
+		struct node *new_node = (struct node *) malloc(sizeof(struct node));
+				if(new_node == NULL){
+					clear();
+					endwin();
+				}
+				new_node->data = input;
+
+				if(head == NULL){
+					new_node->prev = NULL;
+					new_node->next = NULL;
+					head = new_node;
+					tail = new_node;
+				} else if(tail->next == NULL){
+					new_node->prev = tail;
+					new_node->next = NULL;
+					tail->next = new_node;
+					tail = new_node;
+				} else{
+					new_node->next = tail;
+					new_node->prev = tail->prev;
+					struct node *tmp_node = tail->prev;
+					tmp_node->next = new_node;
+					tail->prev = new_node;
+				};
+				nodes += 1;
+				// Adding a new_node to the buffer
 };
