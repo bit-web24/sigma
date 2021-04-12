@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include "buf.h"
 
 #ifndef BIT_TYPES
 
@@ -17,6 +16,15 @@
 
 #endif
 
+struct node {
+	struct node *prev;
+	unsigned int data;
+	struct node *next;
+};
+
+struct node *head = NULL;
+struct node *tail = NULL;
+
 unsigned int input;
 int Xmax,
     Ymax,
@@ -24,7 +32,7 @@ int Xmax,
     Ywin,
     x, y;
 
-
+void lrefresh(WINDOW *window);
 void add_new_node(unsigned int input);
 void set_statusbar(int Xmax, int Ymax, int x, int y){
 	attron(A_REVERSE);
@@ -66,8 +74,9 @@ int main(int argc, char *argv[]){
 	x = 0;
 	y = 0;
 
-	struct node *pos = tail;
-	unsigned int pos_count = 0;
+	// struct node *bar = (struct node *) malloc(sizeof(struct node));
+	head = NULL;
+	tail = NULL;
 
 	getmaxyx(stdscr, Ymax, Xmax);
 	WINDOW *window = newwin(Ymax-2, Xmax, 1, 0);
@@ -82,46 +91,60 @@ int main(int argc, char *argv[]){
 	while((input = getch()) != KEY_CANCEL){
 		switch(input){
 			case ENTER:
-				y += 1;
-				if(y > Ywin-1){
-					y = Ywin-1;
-					x = 0;
-					set_statusbar(Xmax, Ymax, x, y);
+				;
+				struct node *new_node = malloc(32);
+				if(new_node == NULL){
+					clear();
+					endwin();
 				}
-				x = 0;
+				
+				new_node->data = ENTER;
+				
+				if(tail == NULL){
+				new_node->next = NULL;
+				new_node->prev = NULL;
+				
+				tail = new_node;
+				y += 1;
+				
 				wmove(window, y, x);
+				lrefresh(window);
+				set_statusbar(Xmax, Ymax, x, y);
+				
+				}
+				new_node->next = NULL;
+				new_node->prev = tail;
+				tail->next = new_node;
+
+				tail = new_node;
+				x = 0;
+				y += 1;
+				wmove(window, y, x);
+				lrefresh(window);
 				set_statusbar(Xmax, Ymax, x, y);
 				break;
 			case BACKSPACE:
-				x -= 1;
-				if(x < 0){
-					y -= 1;
-					if(y < 0){
-						y = 0;
-						x = 0;
-					} else
-						x = Xmax-1;
-				}
-				if(tail->prev != NULL){
-					mvwdelch(window, y, x);
+				if(tail == NULL){
+					break;
+				} else if(tail->prev != NULL){
 					struct node *xprev = tail->prev;
 					xprev->next = NULL;
 
 					free(tail);
 					tail = xprev;
 					
-					nodes -= 1;
-					lrefresh(window);
-					set_statusbar(Xmax, Ymax, x, y);
-				}
+					x -= 1;
 					mvwdelch(window, y, x);
-					struct node *none = tail->prev;
-					free(tail);
-					tail = none;
-
-					nodes -= 1;
 					lrefresh(window);
 					set_statusbar(Xmax, Ymax, x, y);
+				} else{
+					tail = NULL;
+					head = NULL;
+					x -= 1;
+					mvwdelch(window, y, x);
+					set_statusbar(Xmax, Ymax, x, y);
+				};
+				
 				break;
 			case KEY_DOWN:
 				y += 1;
@@ -182,10 +205,10 @@ int main(int argc, char *argv[]){
 					add_new_node(input);
 				} else{
 					add_new_node(input);
+					x += 1;
 				};
 
 				lrefresh(window);
-				x += 1;
 				set_statusbar(Xmax, Ymax, x, y);
 				break;
 		};
@@ -205,13 +228,13 @@ void add_new_node(unsigned int input){
 					endwin();
 				}
 				new_node->data = input;
-
-				if(head == NULL){
-					new_node->prev = NULL;
+				if(tail == NULL){
 					new_node->next = NULL;
-					head = new_node;
+					new_node->prev = NULL;
+					
 					tail = new_node;
-				} else if(tail->next == NULL){
+					head = new_node;
+				}else if(tail->next == NULL){
 					new_node->prev = tail;
 					new_node->next = NULL;
 					tail->next = new_node;
@@ -219,10 +242,36 @@ void add_new_node(unsigned int input){
 				} else{
 					new_node->next = tail;
 					new_node->prev = tail->prev;
+					
 					struct node *tmp_node = tail->prev;
 					tmp_node->next = new_node;
 					tail->prev = new_node;
 				};
-				nodes += 1;
 				// Adding a new_node to the buffer
+};
+void lrefresh(WINDOW *window){
+	struct node *temp = head;
+	unsigned int X = 0;
+	unsigned int Y = 0;
+
+	while(temp->next != NULL){
+		if(temp->data == ENTER){
+			mvwprintw(window, Y, X, "%c", (char) temp->data);
+			X = 0;
+			Y += 1;
+		} else {	
+			mvwprintw(window, Y, X, "%c", (char) temp->data);
+			X += 1;
+		};
+
+		temp = temp->next;
+	};
+		
+	mvwprintw(window, Y, X, "%c", (char) temp->data);
+
+	X = 0;
+	Y = 0;
+
+	wrefresh(window);
+	refresh();
 };
