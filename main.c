@@ -19,6 +19,8 @@
 struct node {
 	struct node *prev;
 	unsigned int data;
+	int x;
+	int y;
 	struct node *next;
 };
 
@@ -90,35 +92,30 @@ int main(int argc, char *argv[]){
 
 	while((input = getch()) != KEY_CANCEL){
 		switch(input){
-			case ENTER:
-				;
-				struct node *new_node = malloc(32);
+		case ENTER:
+		;
+			struct node *new_node = (struct node *) malloc(sizeof(struct node));
 				if(new_node == NULL){
 					clear();
 					endwin();
 				}
-				
-				new_node->data = ENTER;
+				new_node->data = input;
 				
 				if(tail == NULL){
-				new_node->next = NULL;
-				new_node->prev = NULL;
+					new_node->next = NULL;
+					new_node->prev = NULL;
+				} else{
+					new_node->next = NULL;
+					new_node->prev = tail;
+					tail->next = new_node;
+				};
 				
-				tail = new_node;
-				y += 1;
-				
-				wmove(window, y, x);
-				lrefresh(window);
-				set_statusbar(Xmax, Ymax, x, y);
-				
-				}
-				new_node->next = NULL;
-				new_node->prev = tail;
-				tail->next = new_node;
-
 				tail = new_node;
 				x = 0;
 				y += 1;
+				new_node->x = x;
+				new_node->y = y;
+				
 				wmove(window, y, x);
 				lrefresh(window);
 				set_statusbar(Xmax, Ymax, x, y);
@@ -127,19 +124,34 @@ int main(int argc, char *argv[]){
 				if(tail == NULL){
 					break;
 				} else if(tail->prev != NULL){
-					struct node *xprev = tail->prev;
-					xprev->next = NULL;
+				
+					if(tail->data == ENTER){
+						struct node *xprev = tail->prev;
+						xprev->next = NULL;
 
-					free(tail);
-					tail = xprev;
+						free(tail);
+						tail = xprev;
+						
+						y -= 1;
+						x = (tail->x)+1;
+						
+						wmove(window, y, x);
+					} else{
+						struct node *xprev = tail->prev;
+						xprev->next = NULL;
+
+						free(tail);
+						tail = xprev;
 					
-					x -= 1;
-					mvwdelch(window, y, x);
+						x -= 1;
+						mvwdelch(window, y, x);
+					};
 					lrefresh(window);
 					set_statusbar(Xmax, Ymax, x, y);
 				} else{
 					tail = NULL;
 					head = NULL;
+					
 					x -= 1;
 					mvwdelch(window, y, x);
 					set_statusbar(Xmax, Ymax, x, y);
@@ -231,12 +243,17 @@ void add_new_node(unsigned int input){
 				if(tail == NULL){
 					new_node->next = NULL;
 					new_node->prev = NULL;
+					new_node->x = x;
+					new_node->y = y;
 					
 					tail = new_node;
 					head = new_node;
 				}else if(tail->next == NULL){
 					new_node->prev = tail;
 					new_node->next = NULL;
+					new_node->x = x;
+					new_node->y = y;
+					
 					tail->next = new_node;
 					tail = new_node;
 				} else{
