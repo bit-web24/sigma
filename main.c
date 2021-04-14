@@ -152,7 +152,7 @@ int main(int argc, char *argv[]){
 					lrefresh(window);
 					set_statusbar(Xmax, Ymax, x, y);
 				} else{
-				
+					free(tail);
 					if(tail->data == ENTER){
 						head = NULL;
 						tail = NULL;
