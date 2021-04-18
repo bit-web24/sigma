@@ -33,7 +33,7 @@ int Xmax,
     Xwin,
     Ywin,
     x, y;
-
+bool atlast = true;
 void lrefresh(WINDOW *window);
 void add_new_node(unsigned int input);
 void set_statusbar(int Xmax, int Ymax, int x, int y){
@@ -76,10 +76,8 @@ int main(int argc, char *argv[]){
 	x = 0;
 	y = 0;
 
-	struct node *NONE = (struct node *) malloc(sizeof(struct node));
 	head = NULL;
 	tail = NULL;
-	NONE = NULL;
 
 	getmaxyx(stdscr, Ymax, Xmax);
 	WINDOW *window = newwin(Ymax-2, Xmax, 1, 0);
@@ -103,24 +101,38 @@ int main(int argc, char *argv[]){
 				new_node->data = ENTER;
 				
 				if(tail != NULL){
-					new_node->next = NULL;
-					new_node->prev = tail;
-					tail->next = new_node;
+					if(tail->next != NULL){
+						new_node->next = tail;
+						new_node->prev = tail->prev;
+						new_node->x = x;
+						new_node->y = y;
+						
+						(tail->prev)->next = new_node;
+						tail->prev = new_node;
+						tail = tail;
+					} else{
+						new_node->next = NULL;
+						new_node->prev = tail;
+						tail->next = new_node;
+						tail = new_node;
+					};
 				
 				} else{
 					new_node->next = NULL;
 					new_node->prev = NULL;
 					head = new_node;
+					tail = new_node;
 				};
 				
-				tail = new_node;
 				x = 0;
 				y += 1;
 				new_node->x = x;
 				new_node->y = y;
 				
-				wmove(window, y, x);
+				refresh();
+				wrefresh(window);
 				lrefresh(window);
+				wmove(window, y, x);
 				set_statusbar(Xmax, Ymax, x, y);
 				break;
 			case BACKSPACE:
@@ -136,7 +148,11 @@ int main(int argc, char *argv[]){
 						tail = xprev;
 						
 						y -= 1;
-						x = (tail->x)+1;
+						if(tail->data != ENTER){
+							x = (tail->x)+1;
+						} else{
+							x = (tail->x);
+						};
 						
 						wmove(window, y, x);
 					} else{
@@ -190,12 +206,37 @@ int main(int argc, char *argv[]){
 				set_statusbar(Xmax, Ymax, x, y);
 				break;
 			case KEY_LEFT:
-				if(tail->prev != NULL){
-					tail = tail->prev;
+				if(atlast == true){
+					atlast = false;
 					x -= 1;
+					wrefresh(window);
 					wmove(window, y, x);
 					set_statusbar(Xmax, Ymax, x, y);
-				}
+				} else{
+					if(tail->prev != NULL){
+						if((tail->prev)->data == ENTER){
+							tail = tail->prev;
+							if((tail->prev)->data != ENTER){
+								x = (tail->prev)->x+1;
+							} else{
+								 x = (tail->prev)->x;
+							};
+							
+							y -= 1;
+							wmove(window, y, x);
+							set_statusbar(Xmax, Ymax, x, y);
+						} else{
+						tail = tail->prev;
+						x -= 1;
+						wrefresh(window);
+						wmove(window, y, x);
+						set_statusbar(Xmax, Ymax, x, y);
+						};
+					} 
+					 else{
+						continue;
+					};
+				};
 				break;
 			case KEY_RIGHT:
 				x += 1;
@@ -225,6 +266,7 @@ int main(int argc, char *argv[]){
 				};
 
 				lrefresh(window);
+				wmove(window, y, x);
 				set_statusbar(Xmax, Ymax, x, y);
 				break;
 		};
@@ -253,25 +295,38 @@ void add_new_node(unsigned int input){
 					tail = new_node;
 					head = new_node;
 				}else if(tail->next == NULL){
-					new_node->prev = tail;
-					new_node->next = NULL;
-					new_node->x = x;
-					new_node->y = y;
+				
+					if (atlast == true){
+						new_node->prev = tail;
+						new_node->next = NULL;
+						new_node->x = x;
+						new_node->y = y;
 					
-					tail->next = new_node;
-					tail = new_node;
+						tail->next = new_node;
+						tail = new_node;
+					} else{
+						new_node->next = tail;
+						new_node->prev = tail->prev;
+						new_node->x = x;
+						new_node->y = y;
+						
+						(tail->prev)->next = new_node;
+						tail->prev = new_node;
+						tail = tail;
+					};
 				} else{
 					if(tail->prev != NULL){
-					new_node->next = tail;
-					new_node->prev = tail->prev;
+						new_node->next = tail;
+						new_node->prev = tail->prev;
 					
-					(tail->prev)->next = new_node;
-					tail->prev = new_node;
-					}
-
-					tail->prev = new_node;
-					new_node->next = tail;
-					new_node->prev = NULL;
+						(tail->prev)->next = new_node;
+						tail->prev = new_node;
+					} else{
+						head = new_node;
+						new_node->next = tail;
+						new_node->prev = NULL;
+						tail->prev = new_node;
+					};				
 				};
 				// Adding a new_node to the buffer
 };
@@ -293,8 +348,6 @@ void lrefresh(WINDOW *window){
 			temp->x = X;
 			temp->y = Y;
 			X += 1;
-			
-
 		};
 
 		temp = temp->next;
