@@ -256,18 +256,38 @@ int main(int argc, char *argv[]){
 				};
 				break;
 			case KEY_RIGHT:
-				x += 1;
-				if(x > Xwin-1){
-					y += 1;
-					if(y > Ywin-1){
-						x = Xwin-1;
-						y = Ywin-1;
-						wmove(window, y, x);
-					}
-					x = 0;
-					wmove(window, y, x);
-					set_statusbar(Xmax, Ymax, x, y);
-				}
+				if(tail->next != NULL){
+					if((tail->next)->data == ENTER){
+						if(tail->data == ENTER){
+							tail = tail->next;
+							y += 1;
+							x = 0;
+						} else{
+							tail = tail->next;
+							x += 1;
+						};
+					} else if(tail->data == ENTER){
+						tail = tail->next;
+						x = 0;
+						y += 1;
+					} else{
+						tail = tail->next;
+						x += 1;
+					};
+				} else{
+					if(atlast != true){
+						if(tail->data != ENTER){
+						atlast = true;
+						x += 1;
+						} else{
+							continue;
+						};
+					} else{
+						continue;
+					};
+				};
+				
+				wrefresh(window);
 				wmove(window, y, x);
 				set_statusbar(Xmax, Ymax, x, y);
 				break;
