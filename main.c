@@ -101,20 +101,31 @@ int main(int argc, char *argv[]){
 				new_node->data = ENTER;
 				
 				if(tail != NULL){
-					if(tail->next != NULL){
+					if(tail->prev == NULL){
+						new_node->prev = NULL;
+						new_node->next = tail;
+						tail->prev = new_node; 
+						head = new_node;
+					} else if(tail->next != NULL){
 						new_node->next = tail;
 						new_node->prev = tail->prev;
-						new_node->x = x;
-						new_node->y = y;
 						
 						(tail->prev)->next = new_node;
 						tail->prev = new_node;
 						tail = tail;
 					} else{
+						if(atlast == false){
+						new_node->next = tail;
+						new_node->prev = tail->prev;
+						
+						(tail->prev)->next = new_node;
+						tail->prev = new_node;
+						} else{
 						new_node->next = NULL;
 						new_node->prev = tail;
 						tail->next = new_node;
 						tail = new_node;
+						};
 					};
 				
 				} else{
@@ -124,10 +135,10 @@ int main(int argc, char *argv[]){
 					tail = new_node;
 				};
 				
-				x = 0;
-				y += 1;
 				new_node->x = x;
 				new_node->y = y;
+				x = 0;
+				y += 1;
 				
 				refresh();
 				wrefresh(window);
@@ -207,8 +218,14 @@ int main(int argc, char *argv[]){
 				break;
 			case KEY_LEFT:
 				if(atlast == true){
+					if(tail->data == ENTER){
+						x = tail->x;
+						y = tail->y;
+					} else{
+						x -= 1;
+					};
+					
 					atlast = false;
-					x -= 1;
 					wrefresh(window);
 					wmove(window, y, x);
 					set_statusbar(Xmax, Ymax, x, y);
@@ -330,6 +347,7 @@ void add_new_node(unsigned int input){
 				};
 				// Adding a new_node to the buffer
 };
+
 void lrefresh(WINDOW *window){
 	struct node *temp = head;
 	unsigned int X = 0;
