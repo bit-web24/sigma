@@ -140,8 +140,6 @@ int main(int argc, char *argv[]){
 				x = 0;
 				y += 1;
 				
-				refresh();
-				wrefresh(window);
 				lrefresh(window);
 				wmove(window, y, x);
 				set_statusbar(Xmax, Ymax, x, y);
@@ -233,21 +231,26 @@ int main(int argc, char *argv[]){
 					if(tail->prev != NULL){
 						if((tail->prev)->data == ENTER){
 							tail = tail->prev;
-							if((tail->prev)->data != ENTER){
-								x = (tail->prev)->x+1;
+							if(tail->prev != NULL){
+								if((tail->prev)->data != ENTER){
+									x = (tail->prev)->x+1;
+								} else{
+									 x = (tail->prev)->x;
+								};
+								y -= 1;
 							} else{
-								 x = (tail->prev)->x;
+								x = 0;
+								y = 0;
 							};
 							
-							y -= 1;
 							wmove(window, y, x);
 							set_statusbar(Xmax, Ymax, x, y);
-						} else{
-						tail = tail->prev;
-						x -= 1;
-						wrefresh(window);
-						wmove(window, y, x);
-						set_statusbar(Xmax, Ymax, x, y);
+						} else {
+							tail = tail->prev;
+							x -= 1;
+							wrefresh(window);
+							wmove(window, y, x);
+							set_statusbar(Xmax, Ymax, x, y);
 						};
 					} 
 					 else{
@@ -277,10 +280,12 @@ int main(int argc, char *argv[]){
 				} else{
 					if(atlast != true){
 						if(tail->data != ENTER){
-						atlast = true;
-						x += 1;
+							atlast = true;
+							x += 1;
 						} else{
-							continue;
+							atlast = true;
+							y += 1;
+							x = 0;
 						};
 					} else{
 						continue;
