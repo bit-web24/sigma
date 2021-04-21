@@ -144,11 +144,11 @@ int main(int argc, char *argv[]){
 				wmove(window, y, x);
 				set_statusbar(Xmax, Ymax, x, y);
 				break;
-			case BACKSPACE:
+			case KEY_BACKSPACE:
 				if(tail == NULL){
 					break;
 				} else if(tail->prev != NULL){
-				
+					if(atlast == true){
 					if(tail->data == ENTER){
 						struct node *xprev = tail->prev;
 						xprev->next = NULL;
@@ -174,27 +174,76 @@ int main(int argc, char *argv[]){
 						x -= 1;
 						mvwdelch(window, y, x);
 					};
-					lrefresh(window);
-					set_statusbar(Xmax, Ymax, x, y);
 				} else{
-					free(tail);
-					if(tail->data == ENTER){
-						head = NULL;
-						tail = NULL;
+						/*if(tail->data == ENTER){
+						struct node *xprev = tail->prev;
+						xprev->next = NULL;
+
+						free(tail);
+						tail = xprev;
+						
+						y -= 1;
+						if(tail->data != ENTER){
+							x = (tail->x)+1;
+						} else{
+							x = (tail->x);
+						};
+						
+						wmove(window, y, x);
+					} */
+					if((tail->prev)->prev == NULL){
+						free(tail->prev);
+						tail->prev = NULL;
+						head = tail;
 						x = 0;
 						y = 0;
-						wmove(window, y, x);
+						mvwdelch(window, y, x);
+					} else {
+						if((tail->prev)->data == ENTER){
+					struct node *tmp = tail->prev;
+						tail->prev = (tail->prev)->prev;
+						(tail->prev)->next = tail;
+
+						free(tmp);
+						
+						y -= 1;
+						if(tail->data != ENTER){
+							x = (tail->x)+1;
+						} else{
+							x = (tail->x);
+						};
+						
 						wrefresh(window);
-						set_statusbar(Xmax, Ymax, x, y);
-					}
-					tail = NULL;
-					head = NULL;
-					
-					x = 0;
-					mvwdelch(window, y, x);
-					set_statusbar(Xmax, Ymax, x, y);
-				};
+					}  
+					struct node *tmp = tail->prev;
+						tail->prev = (tail->prev)->prev;
+						(tail->prev)->next = tail;
+
+						free(tmp);
 				
+						x -= 1;
+						mvwdelch(window, y, x);
+					};
+				};
+					lrefresh(window);
+					wmove(window, y, x);
+					set_statusbar(Xmax, Ymax, x, y);
+				} else{
+					if(atlast == true){
+						free(tail);
+						tail = NULL;
+						head = NULL;
+
+						x = 0;
+						y = 0;
+						mvwdelch(window, y, x);
+						wmove(window, y, x);
+						set_statusbar(Xmax, Ymax, x, y);
+					} else{
+					break;
+					};
+				};
+
 				break;
 			case KEY_DOWN:
 				y += 1;
