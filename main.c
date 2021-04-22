@@ -144,7 +144,7 @@ int main(int argc, char *argv[]){
 				wmove(window, y, x);
 				set_statusbar(Xmax, Ymax, x, y);
 				break;
-			case KEY_BACKSPACE:
+			case BACKSPACE:
 				if(tail == NULL){
 					break;
 				} else if(tail->prev != NULL){
@@ -175,22 +175,6 @@ int main(int argc, char *argv[]){
 						mvwdelch(window, y, x);
 					};
 				} else{
-						/*if(tail->data == ENTER){
-						struct node *xprev = tail->prev;
-						xprev->next = NULL;
-
-						free(tail);
-						tail = xprev;
-						
-						y -= 1;
-						if(tail->data != ENTER){
-							x = (tail->x)+1;
-						} else{
-							x = (tail->x);
-						};
-						
-						wmove(window, y, x);
-					} */
 					if((tail->prev)->prev == NULL){
 						free(tail->prev);
 						tail->prev = NULL;
@@ -200,22 +184,22 @@ int main(int argc, char *argv[]){
 						mvwdelch(window, y, x);
 					} else {
 						if((tail->prev)->data == ENTER){
-					struct node *tmp = tail->prev;
+						struct node *tmp = tail->prev;
 						tail->prev = (tail->prev)->prev;
 						(tail->prev)->next = tail;
 
 						free(tmp);
 						
 						y -= 1;
-						if(tail->data != ENTER){
-							x = (tail->x)+1;
+						if((tail->prev)->data == ENTER){
+							x = 0;
 						} else{
-							x = (tail->x);
+							x = (tail->prev)->x+1;
 						};
-						
-						wrefresh(window);
-					}  
-					struct node *tmp = tail->prev;
+
+						wclear(window);
+						}  else{
+						struct node *tmp = tail->prev;
 						tail->prev = (tail->prev)->prev;
 						(tail->prev)->next = tail;
 
@@ -223,6 +207,7 @@ int main(int argc, char *argv[]){
 				
 						x -= 1;
 						mvwdelch(window, y, x);
+						};
 					};
 				};
 					lrefresh(window);
