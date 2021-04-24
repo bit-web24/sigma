@@ -102,10 +102,17 @@ int main(int argc, char *argv[]){
 				
 				if(tail != NULL){
 					if(tail->prev == NULL){
+						if(atlast == true){
+							new_node->next = NULL;
+							new_node->prev = tail;
+							tail->next = new_node;
+							tail = new_node;
+						} else{
 						new_node->prev = NULL;
 						new_node->next = tail;
 						tail->prev = new_node; 
 						head = new_node;
+						};
 					} else if(tail->next != NULL){
 						new_node->next = tail;
 						new_node->prev = tail->prev;
@@ -182,31 +189,32 @@ int main(int argc, char *argv[]){
 						x = 0;
 						y = 0;
 						mvwdelch(window, y, x);
+						wclear(window);
 					} else {
 						if((tail->prev)->data == ENTER){
-						struct node *tmp = tail->prev;
-						tail->prev = (tail->prev)->prev;
-						(tail->prev)->next = tail;
+							struct node *tmp = tail->prev;
+							tail->prev = (tail->prev)->prev;
+							(tail->prev)->next = tail;
 
-						free(tmp);
+							free(tmp);
 						
-						y -= 1;
-						if((tail->prev)->data == ENTER){
-							x = 0;
-						} else{
-							x = (tail->prev)->x+1;
-						};
+							y -= 1;
+							if((tail->prev)->data == ENTER){
+								x = 0;
+							} else{
+								x = (tail->prev)->x+1;
+							};
 
-						wclear(window);
+							wclear(window);
 						}  else{
-						struct node *tmp = tail->prev;
-						tail->prev = (tail->prev)->prev;
-						(tail->prev)->next = tail;
+							struct node *tmp = tail->prev;
+							tail->prev = (tail->prev)->prev;
+							(tail->prev)->next = tail;
 
-						free(tmp);
+							free(tmp);
 				
-						x -= 1;
-						mvwdelch(window, y, x);
+							x -= 1;
+							mvwdelch(window, y, x);
 						};
 					};
 				};
@@ -225,7 +233,7 @@ int main(int argc, char *argv[]){
 						wmove(window, y, x);
 						set_statusbar(Xmax, Ymax, x, y);
 					} else{
-					break;
+						break;
 					};
 				};
 
@@ -336,6 +344,7 @@ int main(int argc, char *argv[]){
 					x  = 0;
 					y += 1;
 					add_new_node(input);
+					wclear(window);
 				} else{
 					add_new_node(input);
 					x += 1;
@@ -382,13 +391,19 @@ void add_new_node(unsigned int input){
 						tail = new_node;
 					} else{
 						new_node->next = tail;
-						new_node->prev = tail->prev;
 						new_node->x = x;
 						new_node->y = y;
 						
-						(tail->prev)->next = new_node;
-						tail->prev = new_node;
-						tail = tail;
+						if(tail->prev != NULL){
+							new_node->prev = tail->prev;
+							(tail->prev)->next = new_node;
+							tail->prev = new_node;
+							tail = tail;
+						} else{
+							new_node->prev = NULL;
+							tail->prev = new_node;
+							head = new_node;
+						};
 					};
 				} else{
 					if(tail->prev != NULL){
