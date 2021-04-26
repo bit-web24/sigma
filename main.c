@@ -34,8 +34,12 @@ int Xmax,
     Ywin,
     x, y;
 bool atlast = true;
+
+void Hscroll(WINDOW *window);
+void Vscroll(WINDOW *window);
 void lrefresh(WINDOW *window);
 void add_new_node(unsigned int input);
+
 void set_statusbar(int Xmax, int Ymax, int x, int y){
 	attron(A_REVERSE);
 	for(int i = 0; i < Xmax; i++){
@@ -53,7 +57,7 @@ void set_topbar(int Xmax, char **CLI_argument){
 		mvprintw(0, i, " ");
 	};
 
-	mvprintw(0, (Xmax-4)/2, "nano");
+	mvprintw(0, (Xmax-4)/2, "sigma");
 	if(CLI_argument[1]){
 		mvprintw(0, 1, "%s", CLI_argument[1]);
 	} else{
@@ -257,7 +261,9 @@ int main(int argc, char *argv[]){
 				set_statusbar(Xmax, Ymax, x, y);
 				break;
 			case KEY_LEFT:
-				if(atlast == true){
+				if(tail == NULL){
+					break;
+				} else if(atlast == true){
 					if(tail->data == ENTER){
 						x = tail->x;
 						y = tail->y;
@@ -301,7 +307,9 @@ int main(int argc, char *argv[]){
 				};
 				break;
 			case KEY_RIGHT:
-				if(tail->next != NULL){
+				if(tail == NULL){
+					break;
+				} else if(tail->next != NULL){
 					if((tail->next)->data == ENTER){
 						if(tail->data == ENTER){
 							tail = tail->next;
@@ -340,18 +348,18 @@ int main(int argc, char *argv[]){
 				break;
 			default:
 				if(x > Xmax-2){
-					add_new_node(ENTER);
-					x  = 0;
-					y += 1;
 					add_new_node(input);
 					wclear(window);
-				} else{
+					Hscroll(window);
+					x += 1;
+					wmove(window, y, Xmax-1);
+				} else {
 					add_new_node(input);
 					x += 1;
+	
+					lrefresh(window);
+					wmove(window, y, x);
 				};
-
-				lrefresh(window);
-				wmove(window, y, x);
 				set_statusbar(Xmax, Ymax, x, y);
 				break;
 		};
@@ -361,6 +369,40 @@ int main(int argc, char *argv[]){
 	};
 
 	endwin();
+	return 0;
+};
+
+void Hscroll(WINDOW *window){
+	unsigned int X, Y, cntr;
+	X = 0;
+	Y = 0;
+	cntr = x-(Xmax-2);
+	
+	struct node *scrollh = head;
+	for(int i = 0; i < cntr; i++){
+		scrollh = scrollh->next;
+	};
+	
+	while(scrollh->next != NULL){
+		if(scrollh->data == ENTER){
+			mvwprintw(window, Y, X, "%c", (char) scrollh->data);
+			X = 0;
+			Y += 1;
+			for(int i = 0; i < cntr; i++){
+				scrollh = scrollh->next;
+			};
+		} else {
+			mvwprintw(window, Y, X, "%c", (char) scrollh->data);
+			X += 1;
+		};
+		scrollh = scrollh->next;
+	};	
+	mvwprintw(window, Y, X, "%c", (char) scrollh->data);
+	X = 0;
+	Y = 0;
+
+	wrefresh(window);
+	refresh();
 };
 
 void add_new_node(unsigned int input){				
