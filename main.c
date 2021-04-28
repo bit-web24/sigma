@@ -155,7 +155,11 @@ int main(int argc, char *argv[]){
 				wmove(window, y, x);
 				set_statusbar(Xmax, Ymax, x, y);
 				break;
+			case KEY_BACKSPACE:
+				goto rmchar;
+				break;
 			case BACKSPACE:
+rmchar:
 				if(tail == NULL){
 					break;
 				} else if(tail->prev != NULL){
@@ -174,7 +178,19 @@ int main(int argc, char *argv[]){
 							x = (tail->x);
 						};
 						
-						wmove(window, y, x);
+						if(x-(Xmax-2) > 0){
+							x -= 1;
+							wclear(window);
+							Hscroll(window);
+							x += 1;
+							wmove(window, y, Xmax-1);
+						} else if(x-(Xmax-2) == 0){
+							mvwdelch(window, y, x);
+							lrefresh(window);
+							wmove(window, y, x);
+						} else {
+							wmove(window, y, x);
+						};
 					} else{
 						struct node *xprev = tail->prev;
 						xprev->next = NULL;
@@ -183,8 +199,25 @@ int main(int argc, char *argv[]){
 						tail = xprev;
 					
 						x -= 1;
-						mvwdelch(window, y, x);
+						if(x-(Xmax-2) > 0){
+							mvwdelch(window, y, x);
+							x -= 1;
+							Hscroll(window);
+							x += 1;
+							wmove(window, y, Xmax-1);
+						} else if(x-(Xmax-2) == 0){
+							mvwdelch(window, y, x);
+							lrefresh(window);
+							wmove(window, y, x);
+						} else {
+							mvwdelch(window, y, x);
+							lrefresh(window);
+							wmove(window, y, x);
+						};
+
+						set_statusbar(Xmax, Ymax, x, y);
 					};
+
 				} else{
 					if((tail->prev)->prev == NULL){
 						free(tail->prev);
@@ -221,10 +254,11 @@ int main(int argc, char *argv[]){
 							mvwdelch(window, y, x);
 						};
 					};
-				};
 					lrefresh(window);
 					wmove(window, y, x);
 					set_statusbar(Xmax, Ymax, x, y);
+				};
+					
 				} else{
 					if(atlast == true){
 						free(tail);
