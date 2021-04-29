@@ -191,6 +191,8 @@ rmchar:
 						} else {
 							wmove(window, y, x);
 						};
+
+						set_statusbar(Xmax, Ymax, x, y);
 					} else{
 						struct node *xprev = tail->prev;
 						xprev->next = NULL;
@@ -227,6 +229,9 @@ rmchar:
 						y = 0;
 						mvwdelch(window, y, x);
 						wclear(window);
+					lrefresh(window);
+					wmove(window, y, x);
+					set_statusbar(Xmax, Ymax, x, y);
 					} else {
 						if((tail->prev)->data == ENTER){
 							struct node *tmp = tail->prev;
@@ -240,9 +245,25 @@ rmchar:
 								x = 0;
 							} else{
 								x = (tail->prev)->x+1;
+					// WORKING LINE HERE	
+							if(x-(Xmax-2) > 0){
+								x -= 1;
+								wclear(window);
+								Hscroll(window);
+								x += 1;
+								wmove(window, y, Xmax-1);
+							} else if(x-(Xmax-2) == 0){
+								mvwdelch(window, y, x);
+								lrefresh(window);
+								wmove(window, y, x);
+							} else {
+								wclear(window);
+								lrefresh(window);
+								wmove(window, y, x);
 							};
+						};
 
-							wclear(window);
+					set_statusbar(Xmax, Ymax, x, y);
 						}  else{
 							struct node *tmp = tail->prev;
 							tail->prev = (tail->prev)->prev;
@@ -251,12 +272,24 @@ rmchar:
 							free(tmp);
 				
 							x -= 1;
-							mvwdelch(window, y, x);
+							if(x-(Xmax-2) > 0){
+								mvwdelch(window, y, x);
+								x -= 1;
+								Hscroll(window);
+								x += 1;
+								wmove(window, y, Xmax-1);
+							} else if(x-(Xmax-2) == 0){
+								mvwdelch(window, y, x);
+								lrefresh(window);
+								wmove(window, y, x);
+							} else {
+								mvwdelch(window, y, x);
+								lrefresh(window);
+								wmove(window, y, x);
+							};
+						set_statusbar(Xmax, Ymax, x, y);
 						};
 					};
-					lrefresh(window);
-					wmove(window, y, x);
-					set_statusbar(Xmax, Ymax, x, y);
 				};
 					
 				} else{
@@ -447,11 +480,12 @@ void add_new_node(unsigned int input){
 					endwin();
 				}
 				new_node->data = input;
+				new_node->x = x;
+				new_node->y = y;
+
 				if(tail == NULL){
 					new_node->next = NULL;
 					new_node->prev = NULL;
-					new_node->x = x;
-					new_node->y = y;
 					
 					tail = new_node;
 					head = new_node;
@@ -460,15 +494,11 @@ void add_new_node(unsigned int input){
 					if (atlast == true){
 						new_node->prev = tail;
 						new_node->next = NULL;
-						new_node->x = x;
-						new_node->y = y;
 					
 						tail->next = new_node;
 						tail = new_node;
 					} else{
 						new_node->next = tail;
-						new_node->x = x;
-						new_node->y = y;
 						
 						if(tail->prev != NULL){
 							new_node->prev = tail->prev;
