@@ -243,9 +243,14 @@ rmchar:
 							y -= 1;
 							if((tail->prev)->data == ENTER){
 								x = 0;
+								/**
+								 * the following code will clear the previous stuffs and list the all chars accordingly
+								 */
+								wclear(window);
+								lrefresh(window);
+								wmove(window, y, x);
 							} else{
 								x = (tail->prev)->x+1;
-					// WORKING LINE HERE	
 							if(x-(Xmax-2) > 0){
 								x -= 1;
 								wclear(window);
@@ -353,18 +358,33 @@ rmchar:
 									 x = (tail->prev)->x;
 								};
 								y -= 1;
+							if(x-(Xmax-2) > 0){
+								x -= 1;
+								Hscroll(window);
+								x += 1;
+								wmove(window, y, Xmax-1);
+							} else {
+								wmove(window, y, x);
+							};
 							} else{
 								x = 0;
 								y = 0;
+								wmove(window, y, x);
 							};
 							
-							wmove(window, y, x);
 							set_statusbar(Xmax, Ymax, x, y);
 						} else {
 							tail = tail->prev;
 							x -= 1;
-							wrefresh(window);
-							wmove(window, y, x);
+							if(x-(Xmax-2) > 0){
+								x -= 1;
+								Hscroll(window);
+								x += 1;
+								wmove(window, y, Xmax-1);
+							} else {
+								wrefresh(window);
+								wmove(window, y, x);
+							};
 							set_statusbar(Xmax, Ymax, x, y);
 						};
 					} 
@@ -443,6 +463,7 @@ void Hscroll(WINDOW *window){
 	unsigned int X, Y, cntr;
 	X = 0;
 	Y = 0;
+	bool stat = false;
 	cntr = x-(Xmax-2);
 	
 	struct node *scrollh = head;
@@ -456,8 +477,20 @@ void Hscroll(WINDOW *window){
 			X = 0;
 			Y += 1;
 			for(int i = 0; i < cntr; i++){
-				scrollh = scrollh->next;
+				/**
+				 * the condition solves the problem of over iteration of
+				 * scrollh = scrollh->next;
+				 * when it actually overflows it set the stat to true, to break the 'while' iteration after breaking the 'for loop'
+				 */
+				if(scrollh->next != NULL){
+					scrollh = scrollh->next;
+				}
+				stat = true;
+				break;
 			};
+			if(stat == true){
+				break;
+			}
 		} else {
 			mvwprintw(window, Y, X, "%c", (char) scrollh->data);
 			X += 1;
