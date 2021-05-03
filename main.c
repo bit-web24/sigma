@@ -402,17 +402,45 @@ rmchar:
 							tail = tail->next;
 							y += 1;
 							x = 0;
+							
+							wrefresh(window);
+							wmove(window, y, x);
 						} else{
 							tail = tail->next;
 							x += 1;
+							
+						if(x-(Xmax-2) > 0){
+							x -= 1;
+							Hscroll(window);
+							x += 1;
+							wmove(window, y, Xmax-1);
+						} else {
+							wrefresh(window);
+							wmove(window, y, x);
 						};
+						
+						};
+						
 					} else if(tail->data == ENTER){
 						tail = tail->next;
 						x = 0;
 						y += 1;
+						
+						wrefresh(window);
+						wmove(window, y, x);
 					} else{
 						tail = tail->next;
 						x += 1;
+						
+						if(x-(Xmax-2) > 0){
+							x -= 1;
+							Hscroll(window);
+							x += 1;
+							wmove(window, y, Xmax-1);
+						} else {
+							wrefresh(window);
+							wmove(window, y, x);
+						};
 					};
 				} else{
 					if(atlast != true){
@@ -420,17 +448,15 @@ rmchar:
 							atlast = true;
 							x += 1;
 						} else{
-							atlast = true;
-							y += 1;
-							x = 0;
+							x += 1;
 						};
 					} else{
 						continue;
 					};
+					
+					wmove(window, y, x);
 				};
 				
-				wrefresh(window);
-				wmove(window, y, x);
 				set_statusbar(Xmax, Ymax, x, y);
 				break;
 			default:
