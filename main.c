@@ -155,7 +155,11 @@ int main(int argc, char *argv[]){
 				wmove(window, y, x);
 				set_statusbar(Xmax, Ymax, x, y);
 				break;
+			case KEY_BACKSPACE:
+				goto rmchar;
+				break;
 			case BACKSPACE:
+rmchar:
 				if(tail == NULL){
 					break;
 				} else if(tail->prev != NULL){
@@ -174,7 +178,21 @@ int main(int argc, char *argv[]){
 							x = (tail->x);
 						};
 						
-						wmove(window, y, x);
+						if(x-(Xmax-2) > 0){
+							x -= 1;
+							wclear(window);
+							Hscroll(window);
+							x += 1;
+							wmove(window, y, Xmax-1);
+						} else if(x-(Xmax-2) == 0){
+							mvwdelch(window, y, x);
+							lrefresh(window);
+							wmove(window, y, x);
+						} else {
+							wmove(window, y, x);
+						};
+
+						set_statusbar(Xmax, Ymax, x, y);
 					} else{
 						struct node *xprev = tail->prev;
 						xprev->next = NULL;
@@ -183,8 +201,25 @@ int main(int argc, char *argv[]){
 						tail = xprev;
 					
 						x -= 1;
-						mvwdelch(window, y, x);
+						if(x-(Xmax-2) > 0){
+							mvwdelch(window, y, x);
+							x -= 1;
+							Hscroll(window);
+							x += 1;
+							wmove(window, y, Xmax-1);
+						} else if(x-(Xmax-2) == 0){
+							mvwdelch(window, y, x);
+							lrefresh(window);
+							wmove(window, y, x);
+						} else {
+							mvwdelch(window, y, x);
+							lrefresh(window);
+							wmove(window, y, x);
+						};
+
+						set_statusbar(Xmax, Ymax, x, y);
 					};
+
 				} else{
 					if((tail->prev)->prev == NULL){
 						free(tail->prev);
@@ -194,6 +229,9 @@ int main(int argc, char *argv[]){
 						y = 0;
 						mvwdelch(window, y, x);
 						wclear(window);
+					lrefresh(window);
+					wmove(window, y, x);
+					set_statusbar(Xmax, Ymax, x, y);
 					} else {
 						if((tail->prev)->data == ENTER){
 							struct node *tmp = tail->prev;
@@ -205,11 +243,32 @@ int main(int argc, char *argv[]){
 							y -= 1;
 							if((tail->prev)->data == ENTER){
 								x = 0;
+								/**
+								 * the following code will clear the previous stuffs and list the all chars accordingly
+								 */
+								wclear(window);
+								lrefresh(window);
+								wmove(window, y, x);
 							} else{
 								x = (tail->prev)->x+1;
+							if(x-(Xmax-2) > 0){
+								x -= 1;
+								wclear(window);
+								Hscroll(window);
+								x += 1;
+								wmove(window, y, Xmax-1);
+							} else if(x-(Xmax-2) == 0){
+								mvwdelch(window, y, x);
+								lrefresh(window);
+								wmove(window, y, x);
+							} else {
+								wclear(window);
+								lrefresh(window);
+								wmove(window, y, x);
 							};
+						};
 
-							wclear(window);
+					set_statusbar(Xmax, Ymax, x, y);
 						}  else{
 							struct node *tmp = tail->prev;
 							tail->prev = (tail->prev)->prev;
@@ -218,13 +277,26 @@ int main(int argc, char *argv[]){
 							free(tmp);
 				
 							x -= 1;
-							mvwdelch(window, y, x);
+							if(x-(Xmax-2) > 0){
+								mvwdelch(window, y, x);
+								x -= 1;
+								Hscroll(window);
+								x += 1;
+								wmove(window, y, Xmax-1);
+							} else if(x-(Xmax-2) == 0){
+								mvwdelch(window, y, x);
+								lrefresh(window);
+								wmove(window, y, x);
+							} else {
+								mvwdelch(window, y, x);
+								lrefresh(window);
+								wmove(window, y, x);
+							};
+						set_statusbar(Xmax, Ymax, x, y);
 						};
 					};
 				};
-					lrefresh(window);
-					wmove(window, y, x);
-					set_statusbar(Xmax, Ymax, x, y);
+					
 				} else{
 					if(atlast == true){
 						free(tail);
@@ -286,18 +358,33 @@ int main(int argc, char *argv[]){
 									 x = (tail->prev)->x;
 								};
 								y -= 1;
+							if(x-(Xmax-2) > 0){
+								x -= 1;
+								Hscroll(window);
+								x += 1;
+								wmove(window, y, Xmax-1);
+							} else {
+								wmove(window, y, x);
+							};
 							} else{
 								x = 0;
 								y = 0;
+								wmove(window, y, x);
 							};
 							
-							wmove(window, y, x);
 							set_statusbar(Xmax, Ymax, x, y);
 						} else {
 							tail = tail->prev;
 							x -= 1;
-							wrefresh(window);
-							wmove(window, y, x);
+							if(x-(Xmax-2) > 0){
+								x -= 1;
+								Hscroll(window);
+								x += 1;
+								wmove(window, y, Xmax-1);
+							} else {
+								wrefresh(window);
+								wmove(window, y, x);
+							};
 							set_statusbar(Xmax, Ymax, x, y);
 						};
 					} 
@@ -315,17 +402,45 @@ int main(int argc, char *argv[]){
 							tail = tail->next;
 							y += 1;
 							x = 0;
+							
+							wrefresh(window);
+							wmove(window, y, x);
 						} else{
 							tail = tail->next;
 							x += 1;
+							
+						if(x-(Xmax-2) > 0){
+							x -= 1;
+							Hscroll(window);
+							x += 1;
+							wmove(window, y, Xmax-1);
+						} else {
+							wrefresh(window);
+							wmove(window, y, x);
 						};
+						
+						};
+						
 					} else if(tail->data == ENTER){
 						tail = tail->next;
 						x = 0;
 						y += 1;
+						
+						wrefresh(window);
+						wmove(window, y, x);
 					} else{
 						tail = tail->next;
 						x += 1;
+						
+						if(x-(Xmax-2) > 0){
+							x -= 1;
+							Hscroll(window);
+							x += 1;
+							wmove(window, y, Xmax-1);
+						} else {
+							wrefresh(window);
+							wmove(window, y, x);
+						};
 					};
 				} else{
 					if(atlast != true){
@@ -333,17 +448,15 @@ int main(int argc, char *argv[]){
 							atlast = true;
 							x += 1;
 						} else{
-							atlast = true;
-							y += 1;
-							x = 0;
+							x += 1;
 						};
 					} else{
 						continue;
 					};
+					
+					wmove(window, y, x);
 				};
 				
-				wrefresh(window);
-				wmove(window, y, x);
 				set_statusbar(Xmax, Ymax, x, y);
 				break;
 			default:
@@ -376,6 +489,7 @@ void Hscroll(WINDOW *window){
 	unsigned int X, Y, cntr;
 	X = 0;
 	Y = 0;
+	bool stat = false;
 	cntr = x-(Xmax-2);
 	
 	struct node *scrollh = head;
@@ -389,8 +503,20 @@ void Hscroll(WINDOW *window){
 			X = 0;
 			Y += 1;
 			for(int i = 0; i < cntr; i++){
-				scrollh = scrollh->next;
+				/**
+				 * the condition solves the problem of over iteration of
+				 * scrollh = scrollh->next;
+				 * when it actually overflows it set the stat to true, to break the 'while' iteration after breaking the 'for loop'
+				 */
+				if(scrollh->next != NULL){
+					scrollh = scrollh->next;
+				}
+				stat = true;
+				break;
 			};
+			if(stat == true){
+				break;
+			}
 		} else {
 			mvwprintw(window, Y, X, "%c", (char) scrollh->data);
 			X += 1;
@@ -413,11 +539,12 @@ void add_new_node(unsigned int input){
 					endwin();
 				}
 				new_node->data = input;
+				new_node->x = x;
+				new_node->y = y;
+
 				if(tail == NULL){
 					new_node->next = NULL;
 					new_node->prev = NULL;
-					new_node->x = x;
-					new_node->y = y;
 					
 					tail = new_node;
 					head = new_node;
@@ -426,15 +553,11 @@ void add_new_node(unsigned int input){
 					if (atlast == true){
 						new_node->prev = tail;
 						new_node->next = NULL;
-						new_node->x = x;
-						new_node->y = y;
 					
 						tail->next = new_node;
 						tail = new_node;
 					} else{
 						new_node->next = tail;
-						new_node->x = x;
-						new_node->y = y;
 						
 						if(tail->prev != NULL){
 							new_node->prev = tail->prev;
