@@ -426,7 +426,7 @@ rmchar:
 						x = 0;
 						y += 1;
 						
-						wrefresh(window);
+						lrefresh(window);
 						wmove(window, y, x);
 					} else{
 						tail = tail->next;
@@ -462,7 +462,6 @@ rmchar:
 			default:
 				if(x > Xmax-2){
 					add_new_node(input);
-					wclear(window);
 					Hscroll(window);
 					x += 1;
 					wmove(window, y, Xmax-1);
@@ -498,7 +497,10 @@ void Hscroll(WINDOW *window){
 	};
 	
 	while(scrollh->next != NULL){
-		if(scrollh->data == ENTER){
+		if(scrollh->data != ENTER){
+			mvwprintw(window, Y, X, "%c", (char) scrollh->data);
+			X += 1;
+		} else {
 			mvwprintw(window, Y, X, "%c", (char) scrollh->data);
 			X = 0;
 			Y += 1;
@@ -517,9 +519,6 @@ void Hscroll(WINDOW *window){
 			if(stat == true){
 				break;
 			}
-		} else {
-			mvwprintw(window, Y, X, "%c", (char) scrollh->data);
-			X += 1;
 		};
 		scrollh = scrollh->next;
 	};	
