@@ -339,13 +339,22 @@ rmchar:
 					if(tail->data == ENTER){
 						x = tail->x;
 						y = tail->y;
+						wrefresh(window);
+						wmove(window, y, x);
 					} else{
-						x -= 1;
+						if(x-(Xmax-2) > 0){
+							x -= 2;
+							Hscroll(window);
+							x += 1;
+							wmove(window, y, Xmax-1);
+						} else {
+							x -= 1;
+							wmove(window, y, x);
+						};
+
 					};
 					
 					atlast = false;
-					wrefresh(window);
-					wmove(window, y, x);
 					set_statusbar(Xmax, Ymax, x, y);
 				} else{
 					if(tail->prev != NULL){
@@ -447,14 +456,23 @@ rmchar:
 						if(tail->data != ENTER){
 							atlast = true;
 							x += 1;
+
+							if(x-(Xmax-2) > 0){
+								wclear(window);
+								x -= 1;
+								Hscroll(window);
+								x += 1;
+								wmove(window, y, Xmax-1);
+							} else{
+								wmove(window, y, x);
+							};
 						} else{
 							x += 1;
+							wmove(window, y, x);
 						};
 					} else{
 						continue;
 					};
-					
-					wmove(window, y, x);
 				};
 				
 				set_statusbar(Xmax, Ymax, x, y);
