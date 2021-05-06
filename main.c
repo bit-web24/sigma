@@ -467,7 +467,10 @@ rmchar:
 								wmove(window, y, x);
 							};
 						} else{
-							x += 1;
+							y += 1;
+							x = 0;
+							atlast = true;
+							lrefresh(window);
 							wmove(window, y, x);
 						};
 					} else{
