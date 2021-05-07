@@ -369,6 +369,7 @@ rmchar:
 								y -= 1;
 							if(x-(Xmax-2) > 0){
 								x -= 1;
+								wclear(window);
 								Hscroll(window);
 								x += 1;
 								wmove(window, y, Xmax-1);
@@ -420,6 +421,7 @@ rmchar:
 							
 						if(x-(Xmax-2) > 0){
 							x -= 1;
+							wclear(window);
 							Hscroll(window);
 							x += 1;
 							wmove(window, y, Xmax-1);
@@ -440,9 +442,10 @@ rmchar:
 					} else{
 						tail = tail->next;
 						x += 1;
-						
+
 						if(x-(Xmax-2) > 0){
 							x -= 1;
+							wclear(window);
 							Hscroll(window);
 							x += 1;
 							wmove(window, y, Xmax-1);
@@ -510,6 +513,7 @@ void Hscroll(WINDOW *window){
 	X = 0;
 	Y = 0;
 	bool stat = false;
+	bool is_enter = false;
 	cntr = x-(Xmax-2);
 	
 	struct node *scrollh = head;
@@ -532,14 +536,26 @@ void Hscroll(WINDOW *window){
 				 * when it actually overflows it set the stat to true, to break the 'while' iteration after breaking the 'for loop'
 				 */
 				if(scrollh->next != NULL){
+					if((scrollh->next)->data == ENTER){
+						scrollh = scrollh->next;
+						is_enter = true;
+						break;
+					} 
+
 					scrollh = scrollh->next;
-				}
-				stat = true;
-				break;
+				} else {
+					stat = true;
+					break;
+				};
 			};
 			if(stat == true){
 				break;
-			}
+			} else {
+				if(is_enter == true){
+					continue;
+				}
+				wrefresh(window);
+			};
 		};
 		scrollh = scrollh->next;
 	};	
