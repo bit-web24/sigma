@@ -14,6 +14,10 @@
 	#define BACKSPACE 127
 #endif
 
+#ifndef ZOOM_IO
+#define ZOOM_IO 410
+#endif
+
 #endif
 
 struct node {
@@ -82,7 +86,7 @@ int main(int argc, char *argv[]){
 
 	head = NULL;
 	tail = NULL;
-
+ASCII_RELOAD:
 	getmaxyx(stdscr, Ymax, Xmax);
 	WINDOW *window = newwin(Ymax-2, Xmax, 1, 0);
 	getmaxyx(window, Ywin, Xwin);
@@ -95,6 +99,9 @@ int main(int argc, char *argv[]){
 
 	while((input = getch()) != KEY_CANCEL){
 		switch(input){
+			case ZOOM_IO:
+				goto ASCII_RELOAD;
+				break;
 		case ENTER:
 		;
 			struct node *new_node = (struct node *) malloc(sizeof(struct node));
