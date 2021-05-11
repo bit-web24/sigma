@@ -14,6 +14,10 @@
 	#define BACKSPACE 127
 #endif
 
+#ifndef ZOOM_IO
+#define ZOOM_IO 410
+#endif
+
 #endif
 
 struct node {
@@ -82,7 +86,7 @@ int main(int argc, char *argv[]){
 
 	head = NULL;
 	tail = NULL;
-
+ASCII_RELOAD:
 	getmaxyx(stdscr, Ymax, Xmax);
 	WINDOW *window = newwin(Ymax-2, Xmax, 1, 0);
 	getmaxyx(window, Ywin, Xwin);
@@ -95,6 +99,9 @@ int main(int argc, char *argv[]){
 
 	while((input = getch()) != KEY_CANCEL){
 		switch(input){
+			case ZOOM_IO:
+				goto ASCII_RELOAD;
+				break;
 		case ENTER:
 		;
 			struct node *new_node = (struct node *) malloc(sizeof(struct node));
@@ -339,13 +346,22 @@ rmchar:
 					if(tail->data == ENTER){
 						x = tail->x;
 						y = tail->y;
+						wrefresh(window);
+						wmove(window, y, x);
 					} else{
-						x -= 1;
+						if(x-(Xmax-2) > 0){
+							x -= 2;
+							Hscroll(window);
+							x += 1;
+							wmove(window, y, Xmax-1);
+						} else {
+							x -= 1;
+							wmove(window, y, x);
+						};
+
 					};
 					
 					atlast = false;
-					wrefresh(window);
-					wmove(window, y, x);
 					set_statusbar(Xmax, Ymax, x, y);
 				} else{
 					if(tail->prev != NULL){
@@ -360,6 +376,7 @@ rmchar:
 								y -= 1;
 							if(x-(Xmax-2) > 0){
 								x -= 1;
+								wclear(window);
 								Hscroll(window);
 								x += 1;
 								wmove(window, y, Xmax-1);
@@ -411,6 +428,7 @@ rmchar:
 							
 						if(x-(Xmax-2) > 0){
 							x -= 1;
+							wclear(window);
 							Hscroll(window);
 							x += 1;
 							wmove(window, y, Xmax-1);
@@ -431,9 +449,10 @@ rmchar:
 					} else{
 						tail = tail->next;
 						x += 1;
-						
+
 						if(x-(Xmax-2) > 0){
 							x -= 1;
+							wclear(window);
 							Hscroll(window);
 							x += 1;
 							wmove(window, y, Xmax-1);
@@ -447,14 +466,26 @@ rmchar:
 						if(tail->data != ENTER){
 							atlast = true;
 							x += 1;
+
+							if(x-(Xmax-2) > 0){
+								wclear(window);
+								x -= 1;
+								Hscroll(window);
+								x += 1;
+								wmove(window, y, Xmax-1);
+							} else{
+								wmove(window, y, x);
+							};
 						} else{
-							x += 1;
+							y += 1;
+							x = 0;
+							atlast = true;
+							lrefresh(window);
+							wmove(window, y, x);
 						};
 					} else{
 						continue;
 					};
-					
-					wmove(window, y, x);
 				};
 				
 				set_statusbar(Xmax, Ymax, x, y);
@@ -489,6 +520,7 @@ void Hscroll(WINDOW *window){
 	X = 0;
 	Y = 0;
 	bool stat = false;
+	bool is_enter = false;
 	cntr = x-(Xmax-2);
 	
 	struct node *scrollh = head;
@@ -511,14 +543,26 @@ void Hscroll(WINDOW *window){
 				 * when it actually overflows it set the stat to true, to break the 'while' iteration after breaking the 'for loop'
 				 */
 				if(scrollh->next != NULL){
+					if((scrollh->next)->data == ENTER){
+						scrollh = scrollh->next;
+						is_enter = true;
+						break;
+					} 
+
 					scrollh = scrollh->next;
-				}
-				stat = true;
-				break;
+				} else {
+					stat = true;
+					break;
+				};
 			};
 			if(stat == true){
 				break;
-			}
+			} else {
+				if(is_enter == true){
+					continue;
+				}
+				wrefresh(window);
+			};
 		};
 		scrollh = scrollh->next;
 	};	
