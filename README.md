@@ -43,3 +43,10 @@ To make actual code changes, you must have the knowledge of following language, 
 If you are going to contribute to `sigma text-editor`, make sure you are making patches on a different branch. And also send the pull request if and only if the current patches are not affecting previous features and should also work properly.
 
 > Note: This project is going to be available only for `Linux` based systems.
+
+#Screenshots
+
+1. ![sigma_text-editor](https://user-images.githubusercontent.com/62652273/117762885-8cd31d00-b247-11eb-84c7-3ddfeafc9c93.gif)
+2. ![sigma-text-editor_smallscreen](https://user-images.githubusercontent.com/62652273/117762947-a1171a00-b247-11eb-9ce7-a22bfb857f8b.png)
+3. ![sigma-text-editor_midium](https://user-images.githubusercontent.com/62652273/117762965-a6746480-b247-11eb-89e2-57ce6f7b656e.png)
+4. ![sigma-text-editor_fullscreen](https://user-images.githubusercontent.com/62652273/117762977-abd1af00-b247-11eb-8f90-215e14b37651.png)
