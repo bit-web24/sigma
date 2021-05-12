@@ -526,6 +526,10 @@ void Hscroll(WINDOW *window){
 	struct node *scrollh = head;
 	for(int i = 0; i < cntr; i++){
 		scrollh = scrollh->next;
+		if(scrollh->data == ENTER){
+			break;
+		}
+		continue;
 	};
 	
 	while(scrollh->next != NULL){
@@ -543,13 +547,12 @@ void Hscroll(WINDOW *window){
 				 * when it actually overflows it set the stat to true, to break the 'while' iteration after breaking the 'for loop'
 				 */
 				if(scrollh->next != NULL){
-					if((scrollh->next)->data == ENTER){
-						scrollh = scrollh->next;
+					scrollh = scrollh->next;
+					if(scrollh->data == ENTER){
 						is_enter = true;
 						break;
-					} 
-
-					scrollh = scrollh->next;
+					}
+					continue;
 				} else {
 					stat = true;
 					break;
