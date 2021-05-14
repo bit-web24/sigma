@@ -38,6 +38,7 @@ int Xmax,
     Ywin,
     x, y;
 bool atlast = true;
+bool zoomed_io = false; 
 
 void Hscroll(WINDOW *window);
 void Vscroll(WINDOW *window);
@@ -86,6 +87,7 @@ int main(int argc, char *argv[]){
 
 	head = NULL;
 	tail = NULL;
+	zoomed_io = false;
 ASCII_RELOAD:
 	getmaxyx(stdscr, Ymax, Xmax);
 	WINDOW *window = newwin(Ymax-2, Xmax, 1, 0);
@@ -94,12 +96,23 @@ ASCII_RELOAD:
 	set_topbar(Xmax, argv);
 	set_statusbar(Xmax, Ymax, x, y);
 	
-	wrefresh(window);
-	wmove(window, y, x);
+	if(zoomed_io == true){
+		if(x-(Xmax-2) > 0){
+			Hscroll(window);
+			wmove(window, y, Xmax-1);
+		}
+		lrefresh(window);
+		wmove(window, y, x);
+		wrefresh(window);
+	} else{
+		wrefresh(window);
+		wmove(window, y, x);
+	};
 
 	while((input = getch()) != KEY_CANCEL){
 		switch(input){
 			case ZOOM_IO:
+				zoomed_io = true;
 				goto ASCII_RELOAD;
 				break;
 		case ENTER:
@@ -645,6 +658,7 @@ void lrefresh(WINDOW *window){
 	unsigned int X = 0;
 	unsigned int Y = 0;
 
+if(temp != NULL){
 	while(temp->next != NULL){
 		if(temp->data == ENTER){
 			mvwprintw(window, Y, X, "%c", (char) temp->data);
@@ -670,4 +684,5 @@ void lrefresh(WINDOW *window){
 
 	wrefresh(window);
 	refresh();
+}
 };
