@@ -51,23 +51,7 @@ void set_statusbar(int Xmax, int Ymax, int x, int y){
 		mvprintw(Ymax-1, i, " ");
 	};
 
-	mvprintw(Ymax-1, Xmax-8, "(%d,%d)", y, x);
-	attroff(A_REVERSE);
-	refresh();
-};
-
-void set_topbar(int Xmax, char **CLI_argument){
-	attron(A_REVERSE);
-	for(int i = 0; i < Xmax; i++){
-		mvprintw(0, i, " ");
-	};
-
-	mvprintw(0, (Xmax-4)/2, "sigma");
-	if(CLI_argument[1]){
-		mvprintw(0, 1, "%s", CLI_argument[1]);
-	} else{
-		mvprintw(0, 1, "New");
-	};
+	mvprintw(Ymax-1, (Xmax-2)/2, "(%d,%d)", y, x);
 	attroff(A_REVERSE);
 	refresh();
 };
@@ -90,10 +74,9 @@ int main(int argc, char *argv[]){
 	zoomed_io = false;
 ASCII_RELOAD:
 	getmaxyx(stdscr, Ymax, Xmax);
-	WINDOW *window = newwin(Ymax-2, Xmax, 1, 0);
+	WINDOW *window = newwin(Ymax-2, Xmax, 0, 0);
 	getmaxyx(window, Ywin, Xwin);
 	
-	set_topbar(Xmax, argv);
 	set_statusbar(Xmax, Ymax, x, y);
 	
 	if(zoomed_io == true){
@@ -432,7 +415,9 @@ rmchar:
 							tail = tail->next;
 							y += 1;
 							x = 0;
-							
+
+							wclear(window);
+							lrefresh(window);
 							wrefresh(window);
 							wmove(window, y, x);
 						} else{
@@ -572,7 +557,7 @@ void Hscroll(WINDOW *window){
 				};
 			};
 			if(cntr_2 == 1){
-				continue;
+				break;
 			} else {
 				if(is_enter == true){
 					continue;
