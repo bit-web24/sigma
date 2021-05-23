@@ -74,7 +74,7 @@ int main(int argc, char *argv[]){
 	zoomed_io = false;
 ASCII_RELOAD:
 	getmaxyx(stdscr, Ymax, Xmax);
-	WINDOW *window = newwin(Ymax-2, Xmax, 0, 0);
+	WINDOW *window = newwin(Ymax-1, Xmax, 0, 0);
 	getmaxyx(window, Ywin, Xwin);
 	
 	set_statusbar(Xmax, Ymax, x, y);
@@ -341,7 +341,7 @@ rmchar:
 				} else if(atlast == true){
 					if(tail->data == ENTER){
 						x = tail->x;
-						y = tail->y;
+						y -= 1;
 						wrefresh(window);
 						wmove(window, y, x);
 					} else{
