@@ -4,10 +4,10 @@ SHELL := bash
 obj := main.o
 LIB := -l ncurses
 sigma: main.o
-	gcc $(obj) $(LIB) -o $@
+	gcc obj/$(obj) $(LIB) -o bin/$@
 
 main.o: main.c
-	gcc -c $< -o $@
+	gcc -c $< -o obj/$@
 
 clear:
-	rm *.o sigma
+	rm obj/*.o bin/sigma
