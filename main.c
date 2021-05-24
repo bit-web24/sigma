@@ -51,7 +51,7 @@ void set_statusbar(int Xmax, int Ymax, int x, int y){
 		mvprintw(Ymax-1, i, " ");
 	};
 
-	mvprintw(Ymax-1, (Xmax-2)/2, "(%d,%d)", y, x);
+	mvprintw(Ymax-1, (Xmax)/2, "(%d,%d)", y, x);
 	attroff(A_REVERSE);
 	refresh();
 };
@@ -560,9 +560,11 @@ void Hscroll(WINDOW *window){
 				break;
 			} else {
 				if(is_enter == true){
+					is_enter = false;
 					continue;
-				}
+				} else{
 				wrefresh(window);
+				};
 			};
 		};
 		if(scrollh->next != NULL){
@@ -571,6 +573,7 @@ void Hscroll(WINDOW *window){
 		// don't iterate
 	};
 	if(cntr_2 == 1){
+		cntr_2 = 0;
 		// don't print any character
 	} else {
 		mvwprintw(window, Y, X, "%c", (char) scrollh->data);
