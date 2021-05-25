@@ -340,7 +340,12 @@ rmchar:
 					break;
 				} else if(atlast == true){
 					if(tail->data == ENTER){
-						x = tail->x;
+						if((tail->prev)->data == ENTER){
+							x = tail->x;
+						} else {
+							x = (tail->prev)->x+1;
+						};
+
 						y -= 1;
 						if(x-(Xmax-2) > 0){
 							x -= 1;
