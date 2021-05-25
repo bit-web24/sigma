@@ -342,8 +342,15 @@ rmchar:
 					if(tail->data == ENTER){
 						x = tail->x;
 						y -= 1;
-						wrefresh(window);
-						wmove(window, y, x);
+						if(x-(Xmax-2) > 0){
+							x -= 1;
+							Hscroll(window);
+							x += 1;
+							wmove(window, y, Xmax-1);
+						} else {
+							wrefresh(window);
+							wmove(window, y, x);
+						};
 					} else{
 						if(x-(Xmax-2) > 0){
 							x -= 2;
@@ -574,7 +581,6 @@ void Hscroll(WINDOW *window){
 	};
 	if(cntr_2 == 1){
 		cntr_2 = 0;
-		// don't print any character
 	} else {
 		mvwprintw(window, Y, X, "%c", (char) scrollh->data);
 	};
