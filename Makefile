@@ -12,4 +12,4 @@ main.o: src/main.c
 	gcc -c $< -o obj/$@
 
 clear:
-	rm obj/*.o bin/sigma
+	rm -drv obj/ bin/
