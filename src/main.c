@@ -4,57 +4,10 @@
 #include <stdbool.h>
 #include <string.h>
 
-#ifndef BIT_TYPES
+#include "ckeys.h"
+#include "main.h"
 
-#ifndef ENTER
-	#define ENTER 10
-#endif
-
-#ifndef BACKSPACE
-	#define BACKSPACE 127
-#endif
-
-#ifndef ZOOM_IO
-#define ZOOM_IO 410
-#endif
-
-#endif
-
-struct node {
-	struct node *prev;
-	unsigned int data;
-	int x;
-	int y;
-	struct node *next;
-};
-
-struct node *head = NULL;
-struct node *tail = NULL;
-
-unsigned int input;
-int Xmax,
-    Ymax,
-    Xwin,
-    Ywin,
-    x, y;
-bool atlast = true;
-bool zoomed_io = false; 
-
-void Hscroll(WINDOW *window);
-void Vscroll(WINDOW *window);
-void lrefresh(WINDOW *window);
 void add_new_node(unsigned int input);
-
-void set_statusbar(int Xmax, int Ymax, int x, int y){
-	attron(A_REVERSE);
-	for(int i = 0; i < Xmax; i++){
-		mvprintw(Ymax-1, i, " ");
-	};
-
-	mvprintw(Ymax-1, (Xmax)/2, "(%d,%d)", y, x);
-	attroff(A_REVERSE);
-	refresh();
-};
 
 int main(int argc, char *argv[]){
 	initscr();
@@ -81,10 +34,10 @@ ASCII_RELOAD:
 	
 	if(zoomed_io == true){
 		if(x-(Xmax-2) > 0){
-			Hscroll(window);
+			Hscroll(window, head, Xmax, x);
 			wmove(window, y, Xmax-1);
 		}
-		lrefresh(window);
+		lrefresh(window, head);
 		wmove(window, y, x);
 		wrefresh(window);
 	} else{
@@ -154,7 +107,7 @@ ASCII_RELOAD:
 				x = 0;
 				y += 1;
 				
-				lrefresh(window);
+				lrefresh(window, head);
 				wmove(window, y, x);
 				set_statusbar(Xmax, Ymax, x, y);
 				break;
@@ -184,12 +137,12 @@ rmchar:
 						if(x-(Xmax-2) > 0){
 							x -= 1;
 							wclear(window);
-							Hscroll(window);
+							Hscroll(window, head, Xmax, x);
 							x += 1;
 							wmove(window, y, Xmax-1);
 						} else if(x-(Xmax-2) == 0){
 							mvwdelch(window, y, x);
-							lrefresh(window);
+							lrefresh(window, head);
 							wmove(window, y, x);
 						} else {
 							wmove(window, y, x);
@@ -207,16 +160,16 @@ rmchar:
 						if(x-(Xmax-2) > 0){
 							mvwdelch(window, y, x);
 							x -= 1;
-							Hscroll(window);
+							Hscroll(window, head, Xmax, x);
 							x += 1;
 							wmove(window, y, Xmax-1);
 						} else if(x-(Xmax-2) == 0){
 							mvwdelch(window, y, x);
-							lrefresh(window);
+							lrefresh(window, head);
 							wmove(window, y, x);
 						} else {
 							mvwdelch(window, y, x);
-							lrefresh(window);
+							lrefresh(window, head);
 							wmove(window, y, x);
 						};
 
@@ -232,7 +185,7 @@ rmchar:
 						y = 0;
 						mvwdelch(window, y, x);
 						wclear(window);
-					lrefresh(window);
+					lrefresh(window, head);
 					wmove(window, y, x);
 					set_statusbar(Xmax, Ymax, x, y);
 					} else {
@@ -250,23 +203,23 @@ rmchar:
 								 * the following code will clear the previous stuffs and list the all chars accordingly
 								 */
 								wclear(window);
-								lrefresh(window);
+								lrefresh(window, head);
 								wmove(window, y, x);
 							} else{
 								x = (tail->prev)->x+1;
 							if(x-(Xmax-2) > 0){
 								x -= 1;
 								wclear(window);
-								Hscroll(window);
+								Hscroll(window, head, Xmax, x);
 								x += 1;
 								wmove(window, y, Xmax-1);
 							} else if(x-(Xmax-2) == 0){
 								mvwdelch(window, y, x);
-								lrefresh(window);
+								lrefresh(window, head);
 								wmove(window, y, x);
 							} else {
 								wclear(window);
-								lrefresh(window);
+								lrefresh(window, head);
 								wmove(window, y, x);
 							};
 						};
@@ -283,16 +236,16 @@ rmchar:
 							if(x-(Xmax-2) > 0){
 								mvwdelch(window, y, x);
 								x -= 1;
-								Hscroll(window);
+								Hscroll(window, head, Xmax, x);
 								x += 1;
 								wmove(window, y, Xmax-1);
 							} else if(x-(Xmax-2) == 0){
 								mvwdelch(window, y, x);
-								lrefresh(window);
+								lrefresh(window, head);
 								wmove(window, y, x);
 							} else {
 								mvwdelch(window, y, x);
-								lrefresh(window);
+								lrefresh(window, head);
 								wmove(window, y, x);
 							};
 						set_statusbar(Xmax, Ymax, x, y);
@@ -349,7 +302,7 @@ rmchar:
 						y -= 1;
 						if(x-(Xmax-2) > 0){
 							x -= 1;
-							Hscroll(window);
+							Hscroll(window, head, Xmax, x);
 							x += 1;
 							wmove(window, y, Xmax-1);
 						} else {
@@ -359,7 +312,7 @@ rmchar:
 					} else{
 						if(x-(Xmax-2) > 0){
 							x -= 2;
-							Hscroll(window);
+							Hscroll(window, head, Xmax, x);
 							x += 1;
 							wmove(window, y, Xmax-1);
 						} else {
@@ -385,7 +338,7 @@ rmchar:
 							if(x-(Xmax-2) > 0){
 								x -= 1;
 								wclear(window);
-								Hscroll(window);
+								Hscroll(window, head, Xmax, x);
 								x += 1;
 								wmove(window, y, Xmax-1);
 							} else {
@@ -403,7 +356,7 @@ rmchar:
 							x -= 1;
 							if(x-(Xmax-2) > 0){
 								x -= 1;
-								Hscroll(window);
+								Hscroll(window, head, Xmax, x);
 								x += 1;
 								wmove(window, y, Xmax-1);
 							} else {
@@ -429,7 +382,7 @@ rmchar:
 							x = 0;
 
 							wclear(window);
-							lrefresh(window);
+							lrefresh(window, head);
 							wrefresh(window);
 							wmove(window, y, x);
 						} else{
@@ -439,7 +392,7 @@ rmchar:
 						if(x-(Xmax-2) > 0){
 							x -= 1;
 							wclear(window);
-							Hscroll(window);
+							Hscroll(window, head, Xmax, x);
 							x += 1;
 							wmove(window, y, Xmax-1);
 						} else {
@@ -454,7 +407,7 @@ rmchar:
 						x = 0;
 						y += 1;
 						
-						lrefresh(window);
+						lrefresh(window, head);
 						wmove(window, y, x);
 					} else{
 						tail = tail->next;
@@ -463,7 +416,7 @@ rmchar:
 						if(x-(Xmax-2) > 0){
 							x -= 1;
 							wclear(window);
-							Hscroll(window);
+							Hscroll(window, head, Xmax, x);
 							x += 1;
 							wmove(window, y, Xmax-1);
 						} else {
@@ -480,7 +433,7 @@ rmchar:
 							if(x-(Xmax-2) > 0){
 								wclear(window);
 								x -= 1;
-								Hscroll(window);
+								Hscroll(window, head, Xmax, x);
 								x += 1;
 								wmove(window, y, Xmax-1);
 							} else{
@@ -490,7 +443,7 @@ rmchar:
 							y += 1;
 							x = 0;
 							atlast = true;
-							lrefresh(window);
+							lrefresh(window, head);
 							wmove(window, y, x);
 						};
 					} else{
@@ -503,14 +456,14 @@ rmchar:
 			default:
 				if(x > Xmax-2){
 					add_new_node(input);
-					Hscroll(window);
+					Hscroll(window, head, Xmax, x);
 					x += 1;
 					wmove(window, y, Xmax-1);
 				} else {
 					add_new_node(input);
 					x += 1;
 	
-					lrefresh(window);
+					lrefresh(window, head);
 					wmove(window, y, x);
 				};
 				set_statusbar(Xmax, Ymax, x, y);
@@ -525,76 +478,7 @@ rmchar:
 	return 0;
 };
 
-void Hscroll(WINDOW *window){
-	unsigned int X, Y, cntr;
-	X = 0;
-	Y = 0;
-	bool is_enter = false;
-	cntr = x-(Xmax-2);
-	uint8_t cntr_2= 0;
-	
-	struct node *scrollh = head;
-	for(int i = 0; i < cntr; i++){
-		scrollh = scrollh->next;
-		if(scrollh->data == ENTER){
-			break;
-		}
-		continue;
-	};
-	
-	while(scrollh->next != NULL){
-		if(scrollh->data != ENTER){
-			mvwprintw(window, Y, X, "%c", (char) scrollh->data);
-			X += 1;
-		} else {
-			mvwprintw(window, Y, X, "%c", (char) scrollh->data);
-			X = 0;
-			Y += 1;
-			for(int i = 0; i < cntr; i++){
-				/**
-				 * the condition solves the problem of over iteration of
-				 * scrollh = scrollh->next;
-				 * when it actually overflows it set the stat to true, to break the 'while' iteration after breaking the 'for loop'
-				 */
-				if(scrollh->next != NULL){
-					scrollh = scrollh->next;
-					if(scrollh->data == ENTER){
-						is_enter = true;
-						break;
-					}
-					continue;
-				} else {
-					cntr_2 = 1;
-					break;
-				};
-			};
-			if(cntr_2 == 1){
-				break;
-			} else {
-				if(is_enter == true){
-					is_enter = false;
-					continue;
-				} else{
-				wrefresh(window);
-				};
-			};
-		};
-		if(scrollh->next != NULL){
-			scrollh = scrollh->next;
-		}
-		// don't iterate
-	};
-	if(cntr_2 == 1){
-		cntr_2 = 0;
-	} else {
-		mvwprintw(window, Y, X, "%c", (char) scrollh->data);
-	};
-	X = 0;
-	Y = 0;
 
-	wrefresh(window);
-	refresh();
-};
 
 void add_new_node(unsigned int input){				
 		// Adding a new_node to the buffer
@@ -652,36 +536,4 @@ void add_new_node(unsigned int input){
 				// Adding a new_node to the buffer
 };
 
-void lrefresh(WINDOW *window){
-	struct node *temp = head;
-	unsigned int X = 0;
-	unsigned int Y = 0;
 
-if(temp != NULL){
-	while(temp->next != NULL){
-		if(temp->data == ENTER){
-			mvwprintw(window, Y, X, "%c", (char) temp->data);
-			X = 0;
-			Y += 1;
-			
-			temp->x = X;
-			temp->y = Y;
-		} else {	
-			mvwprintw(window, Y, X, "%c", (char) temp->data);
-			temp->x = X;
-			temp->y = Y;
-			X += 1;
-		};
-
-		temp = temp->next;
-	};
-		
-	mvwprintw(window, Y, X, "%c", (char) temp->data);
-
-	X = 0;
-	Y = 0;
-
-	wrefresh(window);
-	refresh();
-}
-};
