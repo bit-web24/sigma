@@ -1,6 +1,6 @@
 /**
  * Sigma - A Lightweight Text Editor
- * /
+ */
 
 /** This file is part of Sigma.
 
@@ -476,6 +476,7 @@ rmchar:
 			default:
 				if(x > Xmax-2){
 					add_new_node(input);
+					wclear(window);
 					Hscroll(window, head, Xmax, x);
 					x += 1;
 					wmove(window, y, Xmax-1);

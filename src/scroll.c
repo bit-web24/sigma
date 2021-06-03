@@ -23,8 +23,8 @@ void Hscroll(WINDOW *window, struct node *head, int Xmax, int x){
 	X = 0;
 	Y = 0;
 	bool is_enter = false;
+	bool is_last = false;
 	cntr = x-(Xmax-2);
-	uint8_t cntr_2= 0;
 	
 	struct node *scrollh = head;
 	for(int i = 0; i < cntr; i++){
@@ -58,31 +58,35 @@ void Hscroll(WINDOW *window, struct node *head, int Xmax, int x){
 					}
 					continue;
 				} else {
-					cntr_2 = 1;
+					is_last = true;
 					break;
 				};
 			};
-			if(cntr_2 == 1){
+
+			if(is_last){
 				break;
-			} else {
-				if(is_enter == true){
-					is_enter = false;
-					continue;
-				} else{
+			} else if (is_enter == true){
+				is_enter = false;
+				continue;
+			} else{
 				wrefresh(window);
-				};
 			};
 		};
+
 		if(scrollh->next != NULL){
 			scrollh = scrollh->next;
-		}
-		// don't iterate
+		} else {
+			break;
+		};
+		//don't iterate
 	};
-	if(cntr_2 == 1){
-		cntr_2 = 0;
+
+	if(is_last == true){
+		is_last = false;
 	} else {
 		mvwprintw(window, Y, X, "%c", (char) scrollh->data);
 	};
+
 	X = 0;
 	Y = 0;
 
