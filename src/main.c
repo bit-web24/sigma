@@ -28,8 +28,13 @@
 #include "main.h"
 
 void add_new_node(unsigned int input);
+int arg_count;
+char **arg_var;
 
 int main(int argc, char *argv[]){
+	 arg_count = argc;
+	 arg_var = argv;
+
 	initscr();
 	noecho();
 	start_color();

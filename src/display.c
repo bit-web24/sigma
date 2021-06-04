@@ -18,12 +18,18 @@
 
 #include "ckeys.h"
 
+extern int  arg_count;
+extern char **arg_var;
+
 void set_statusbar(int Xmax, int Ymax, int x, int y){
 	attron(A_REVERSE);
 	for(int i = 0; i < Xmax; i++){
 		mvprintw(Ymax-1, i, " ");
 	};
 
+	if(arg_count > 0){
+		mvprintw(Ymax-1, 1, "\"%s\"", *(arg_var+1));
+	};
 	mvprintw(Ymax-1, (Xmax)/2, "(%d,%d)", y, x);
 	attroff(A_REVERSE);
 	refresh();
