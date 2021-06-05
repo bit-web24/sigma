@@ -31,6 +31,7 @@ void add_new_node(unsigned int input);
 
 int main(int argc, char **argv){
 	ARGC = argc; ARGV = argv;
+	
 	initscr();
 	noecho();
 	start_color();
