@@ -31,6 +31,7 @@ void add_new_node(unsigned int input);
 
 int main(int argc, char **argv){
 	ARGC = argc; ARGV = argv;
+	TOTAL_LINE_WRITTEN = 0;
 	
 	initscr();
 	noecho();
@@ -128,6 +129,7 @@ ASCII_RELOAD:
 				new_node->y = y;
 				x = 0;
 				y += 1;
+				TOTAL_LINE_WRITTEN += 1;
 				
 				lrefresh(window, head);
 				wmove(window, y, x);
@@ -150,6 +152,7 @@ rmchar:
 						tail = xprev;
 						
 						y -= 1;
+						TOTAL_LINE_WRITTEN -= 1;
 						if(tail->data != ENTER){
 							x = (tail->x)+1;
 						} else{
@@ -205,11 +208,13 @@ rmchar:
 						head = tail;
 						x = 0;
 						y = 0;
+						TOTAL_LINE_WRITTEN = 0;
+
 						mvwdelch(window, y, x);
 						wclear(window);
-					lrefresh(window, head);
-					wmove(window, y, x);
-					set_statusbar(Xmax, Ymax, x, y);
+						lrefresh(window, head);
+						wmove(window, y, x);
+						set_statusbar(Xmax, Ymax, x, y);
 					} else {
 						if((tail->prev)->data == ENTER){
 							struct node *tmp = tail->prev;
@@ -219,6 +224,7 @@ rmchar:
 							free(tmp);
 						
 							y -= 1;
+							TOTAL_LINE_WRITTEN -= 1;
 							if((tail->prev)->data == ENTER){
 								x = 0;
 								/**
@@ -283,6 +289,7 @@ rmchar:
 
 						x = 0;
 						y = 0;
+						TOTAL_LINE_WRITTEN  = 0;
 						mvwdelch(window, y, x);
 						wmove(window, y, x);
 						set_statusbar(Xmax, Ymax, x, y);
