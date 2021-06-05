@@ -28,7 +28,11 @@ void set_statusbar(int Xmax, int Ymax, int x, int y){
 		mvprintw(Ymax-1, i, " ");
 	};
 
-	if(ARGC > 0) mvprintw(Ymax-1, 1, "\"%s\"", ARGV[1]);
+	if(ARGV[1] != NULL) {
+		mvprintw(Ymax-1, 1, "\"%s\"", ARGV[1]);
+	} else {
+		mvprintw(Ymax-1, 1, "\"NEW\"");
+	};
 
 	mvprintw(Ymax-1, (Xmax)/2, "(%d,%d)", y, x);
 	mvprintw(Ymax-1, (Xmax-4), "[%d]", TOTAL_LINE_WRITTEN);
