@@ -24,12 +24,13 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "ckeys.h"
+#include "global.h"
 #include "main.h"
 
 void add_new_node(unsigned int input);
 
-int main(int argc, char *argv[]){
+int main(int argc, char **argv){
+	ARGC = argc; ARGV = argv;
 	initscr();
 	noecho();
 	start_color();

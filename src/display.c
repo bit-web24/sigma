@@ -16,13 +16,18 @@
 
 #include <ncurses.h>
 
-#include "ckeys.h"
+#include "global.h"
+
+extern int ARGC;
+extern char **ARGV;
 
 void set_statusbar(int Xmax, int Ymax, int x, int y){
 	attron(A_REVERSE);
 	for(int i = 0; i < Xmax; i++){
 		mvprintw(Ymax-1, i, " ");
 	};
+
+	if(ARGC > 0) mvprintw(Ymax-1, 2, "\"%s\"", ARGV[1]);
 
 	mvprintw(Ymax-1, (Xmax)/2, "(%d,%d)", y, x);
 	attroff(A_REVERSE);

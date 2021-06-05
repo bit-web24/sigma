@@ -16,7 +16,7 @@
 
 #include <ncurses.h>
 
-#include "ckeys.h"
+#include "global.h"
 
 void Hscroll(WINDOW *window, struct node *head, int Xmax, int x){
 	unsigned int X, Y, cntr;
