@@ -28,6 +28,7 @@ int Xmax,
     x, y;
 bool atlast = true;
 bool zoomed_io = false;
+int ARGC; char **ARGV;
 
 extern void Hscroll(WINDOW *window, struct node *head, int Xmax, int x);
 extern void lrefresh(WINDOW *window, struct node *head);
