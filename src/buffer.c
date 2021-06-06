@@ -14,32 +14,36 @@
    * along with Sigma.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef C_KEYS
-#define C_KEYS
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ncurses.h>
 
-#ifndef ENTER
-#define ENTER 10
-#endif
+#include "global.h"
 
-#ifndef BACKSPACE
-#define BACKSPACE 127
-#endif
+extern char **ARGV;
+static FILE *TARGET;
 
-#ifndef ZOOM_IO
-#define ZOOM_IO 410
-#endif
+void load_buffer(struct node *head, WINDOW *window);
 
-#ifndef BUFFER_LOADED
-#define BUFFER_LOADED 0
-#endif
+void load_buffer(struct node *head, WINDOW *window){
+	char INPUT_FILE[250]; 
+	uint32_t i = 0;
+	char CHAR;
 
-
-struct node {
-	struct node *prev;
-	unsigned int data;
-	int x;
-	int y;
-	struct node *next;
+	system("pwd > ~/.local/pwd.txt");
+	TARGET = fopen("~/.local/pwd.txt", "r");
+	
+	while((CHAR = fgetc(TARGET)) != EOF){
+		INPUT_FILE[i] = CHAR;
+		i++;
+	};
+	fclose(TARGET);
+	strcat(INPUT_FILE, "/");
+	strcat(INPUT_FILE, ARGV[1]);
+	
+	TARGET = fopen(INPUT_FILE, "w");
+	fprintf(TARGET, "Absolute Path : %s", INPUT_FILE);
+	printf("%s\n", INPUT_FILE);
+	fclose(TARGET);
 };
-
-#endif

@@ -52,8 +52,14 @@ ASCII_RELOAD:
 	getmaxyx(stdscr, Ymax, Xmax);
 	WINDOW *window = newwin(Ymax-1, Xmax, 0, 0);
 	getmaxyx(window, Ywin, Xwin);
-	
-	set_statusbar(Xmax, Ymax, x, y);
+
+	// Loading file text into main buffer
+	if(ARGV[1] == NULL){
+		set_statusbar(Xmax, Ymax, x, y);
+	} else {
+		load_buffer(head, window);
+		exit(0);
+	};
 	
 	if(zoomed_io == true){
 		if(x-(Xmax-2) > 0){

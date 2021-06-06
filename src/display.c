@@ -22,6 +22,9 @@ extern int ARGC;
 extern char **ARGV;
 extern int TOTAL_LINE_WRITTEN;
 
+void set_statusbar(int Xmax, int Ymax, int x, int y);
+void lrefresh(WINDOW *window, struct node *head);
+
 void set_statusbar(int Xmax, int Ymax, int x, int y){
 	attron(A_REVERSE);
 	for(int i = 0; i < Xmax; i++){
