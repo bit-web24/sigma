@@ -57,8 +57,12 @@ ASCII_RELOAD:
 	if(ARGV[1] == NULL){
 		set_statusbar(Xmax, Ymax, x, y);
 	} else {
-		load_buffer(head, window);
-		exit(0);
+		set_statusbar(Xmax, Ymax, x, y);
+		int loaded = load_buffer(head, window);
+		if(loaded == (int)false){
+			// INPUT FILE IS NEW FILE
+		}
+		// INPUT FILE EXISTS
 	};
 	
 	if(zoomed_io == true){

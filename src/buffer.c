@@ -13,7 +13,7 @@
    * You should have received a copy of the GNU General Public License
    * along with Sigma.  If not, see <https://www.gnu.org/licenses/>.
 */
-
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
@@ -22,28 +22,38 @@
 #include "global.h"
 
 extern char **ARGV;
-static FILE *TARGET;
 
-void load_buffer(struct node *head, WINDOW *window);
+int  load_buffer(struct node *head, WINDOW *window);
+bool INPUT_FILE_PATH();
 
-void load_buffer(struct node *head, WINDOW *window){
-	char INPUT_FILE[250]; 
-	uint32_t i = 0;
-	char CHAR;
-
-	system("pwd > ~/.local/pwd.txt");
-	TARGET = fopen("~/.local/pwd.txt", "r");
+bool INPUT_FILE_PATH(){
+	FILE *TARGET;
+	static char INPUT_FILE[250]; 
 	
-	while((CHAR = fgetc(TARGET)) != EOF){
-		INPUT_FILE[i] = CHAR;
-		i++;
-	};
+	system("pwd > ../pwd.txt");
+	
+	TARGET = fopen("../pwd.txt", "r");
+	fscanf(TARGET, "%s", INPUT_FILE);
 	fclose(TARGET);
+
 	strcat(INPUT_FILE, "/");
 	strcat(INPUT_FILE, ARGV[1]);
-	
-	TARGET = fopen(INPUT_FILE, "w");
-	fprintf(TARGET, "Absolute Path : %s", INPUT_FILE);
-	printf("%s\n", INPUT_FILE);
-	fclose(TARGET);
+
+	char check_input_file[258] = "test -e ";
+	strcat(check_input_file, INPUT_FILE);
+
+	int exist = system(check_input_file);
+	if(exist == 0){
+		return true;
+	} else{
+		return false;
+	}
+}
+
+int load_buffer(struct node *head, WINDOW *window){
+	bool does_exist = INPUT_FILE_PATH();
+	if(does_exist == false){
+		return 0;
+	}
+	return 1;
 };
