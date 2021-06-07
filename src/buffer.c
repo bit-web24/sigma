@@ -22,14 +22,15 @@
 #include "global.h"
 
 extern char **ARGV;
+extern int  lrefresh(WINDOW *window, struct node *head);
 
-int  load_buffer(struct node *head, WINDOW *window);
+int  load_buffer(WINDOW *window, struct node *head);
+int  _load_file_(WINDOW *window, struct node *head);
 bool INPUT_FILE_PATH();
+FILE *TARGET;
+char INPUT_FILE[250]; 
 
 bool INPUT_FILE_PATH(){
-	FILE *TARGET;
-	static char INPUT_FILE[250]; 
-	
 	system("pwd > ../pwd.txt");
 	
 	TARGET = fopen("../pwd.txt", "r");
@@ -50,10 +51,23 @@ bool INPUT_FILE_PATH(){
 	}
 }
 
-int load_buffer(struct node *head, WINDOW *window){
+int _load_file_(WINDOW *window, struct node *head){
+	return 0;
+}
+
+int load_buffer(WINDOW *window, struct node *head){
 	bool does_exist = INPUT_FILE_PATH();
-	if(does_exist == false){
-		return 0;
+	if(does_exist == true){
+		int loaded = _load_file_(window, head);
+		if(loaded == 0){
+			return 0;
+		}
+		exit(EXIT_FAILURE);
 	}
-	return 1;
+	TARGET = fopen(INPUT_FILE, "w");
+	if(TARGET != NULL){
+		fclose(TARGET);
+		return -1;
+	}
+	exit(EXIT_FAILURE);
 };

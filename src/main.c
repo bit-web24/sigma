@@ -58,8 +58,8 @@ ASCII_RELOAD:
 		set_statusbar(Xmax, Ymax, x, y);
 	} else {
 		set_statusbar(Xmax, Ymax, x, y);
-		int loaded = load_buffer(head, window);
-		if(loaded == (int)false){
+		int loaded = load_buffer(window, head);
+		if(loaded == -1){
 			// INPUT FILE IS NEW FILE
 		}
 		// INPUT FILE EXISTS
