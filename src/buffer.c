@@ -23,6 +23,7 @@
 
 extern char **ARGV;
 extern int  lrefresh(WINDOW *window, struct node *head);
+extern void add_new_node(unsigned int input);
 
 int  load_buffer(WINDOW *window, struct node *head);
 int  _load_file_(WINDOW *window, struct node *head);
@@ -52,6 +53,17 @@ bool INPUT_FILE_PATH(){
 }
 
 int _load_file_(WINDOW *window, struct node *head){
+	TARGET = fopen(INPUT_FILE, "r+");
+	char ch;
+
+	fscanf(TARGET, "%c", &ch);
+	while(ch != EOF){
+		add_new_node((int)ch);
+		fscanf(TARGET, "%c", &ch);
+	};
+
+	lrefresh(window, head);
+	fclose(TARGET);
 	return 0;
 }
 
