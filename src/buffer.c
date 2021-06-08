@@ -22,15 +22,16 @@
 #include "global.h"
 
 extern char **ARGV;
-extern int x;
-extern int y;
-extern int Xmax;
-extern int Ymax;
+extern int  x;
+extern int  y;
+extern int  Xmax;
+extern int  Ymax;
 extern int  lrefresh(WINDOW *window, struct node *head);
 extern void add_new_node(unsigned int input);
+extern struct node *tail;
 
-int  load_buffer(WINDOW *window, struct node *head);
-int  _load_file_(WINDOW *window, struct node *head);
+int  load_buffer();
+int  _load_file_();
 bool INPUT_FILE_PATH();
 FILE *TARGET;
 char INPUT_FILE[250]; 
@@ -56,27 +57,36 @@ bool INPUT_FILE_PATH(){
 	}
 }
 
-int _load_file_(WINDOW *window, struct node *head){
+int _load_file_(){
 	TARGET = fopen(INPUT_FILE, "r+");
-	char ch;
+	int ch;
 
-	fscanf(TARGET, "%c", &ch);
-	while(ch != 'x'){
-		add_new_node((unsigned int)ch);
-		x++;
-		fscanf(TARGET, "%c", &ch);
+	while((ch = fgetc(TARGET)) != EOF){
+		if(ch == ENTER){
+			add_new_node((unsigned int)ch);
+			y++;
+			x = 0;
+		} else {
+			add_new_node((unsigned int)ch);
+			x++;
+		}
 	};
 
-	add_new_node((unsigned int)ch);
+	tail = tail->prev;
+	tail->next = NULL;
+
+	x = tail->x;
 	x++;
+	y = tail->y;
+
 	fclose(TARGET);
 	return 0;
 }
 
-int load_buffer(WINDOW *window, struct node *head){
+int load_buffer(){
 	bool does_exist = INPUT_FILE_PATH();
 	if(does_exist == true){
-		int loaded = _load_file_(window, head);
+		int loaded = _load_file_();
 		if(loaded == 0){
 			return 0;
 		}
