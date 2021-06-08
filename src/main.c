@@ -57,8 +57,14 @@ ASCII_RELOAD:
 	if(ARGV[1] == NULL){
 		set_statusbar(Xmax, Ymax, x, y);
 	} else {
-		set_statusbar(Xmax, Ymax, x, y);
 		int loaded = load_buffer(window, head);
+		lrefresh(window, head);
+		wmove(window, y, x);
+		set_statusbar(Xmax, Ymax, x, y);
+
+
+		refresh();
+		wrefresh(window);
 		if(loaded == -1){
 			// INPUT FILE IS NEW FILE
 		}
@@ -74,6 +80,7 @@ ASCII_RELOAD:
 		wmove(window, y, x);
 		wrefresh(window);
 	} else{
+		refresh();
 		wrefresh(window);
 		wmove(window, y, x);
 	};
@@ -517,7 +524,6 @@ rmchar:
 	endwin();
 	return 0;
 };
-
 
 
 void add_new_node(unsigned int input){				

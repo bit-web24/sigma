@@ -22,6 +22,10 @@
 #include "global.h"
 
 extern char **ARGV;
+extern int x;
+extern int y;
+extern int Xmax;
+extern int Ymax;
 extern int  lrefresh(WINDOW *window, struct node *head);
 extern void add_new_node(unsigned int input);
 
@@ -57,12 +61,14 @@ int _load_file_(WINDOW *window, struct node *head){
 	char ch;
 
 	fscanf(TARGET, "%c", &ch);
-	while(ch != EOF){
-		add_new_node((int)ch);
+	while(ch != 'x'){
+		add_new_node((unsigned int)ch);
+		x++;
 		fscanf(TARGET, "%c", &ch);
 	};
 
-	lrefresh(window, head);
+	add_new_node((unsigned int)ch);
+	x++;
 	fclose(TARGET);
 	return 0;
 }
