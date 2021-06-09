@@ -58,6 +58,7 @@ ASCII_RELOAD:
 		set_statusbar(Xmax, Ymax, x, y);
 	} else {
 		int loaded = load_buffer();
+		wclear(window);
 		lrefresh(window, head);
 		wmove(window, y, x);
 		set_statusbar(Xmax, Ymax, x, y);

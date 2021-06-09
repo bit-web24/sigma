@@ -28,6 +28,7 @@ extern int  Xmax;
 extern int  Ymax;
 extern int  lrefresh(WINDOW *window, struct node *head);
 extern void add_new_node(unsigned int input);
+extern int  TOTAL_LINE_WRITTEN; 
 extern struct node *tail;
 
 int  load_buffer();
@@ -59,11 +60,13 @@ bool INPUT_FILE_PATH(){
 
 int _load_file_(){
 	TARGET = fopen(INPUT_FILE, "r+");
+	TOTAL_LINE_WRITTEN = 0;
 	int ch;
 
 	while((ch = fgetc(TARGET)) != EOF){
 		if(ch == ENTER){
 			add_new_node((unsigned int)ch);
+			TOTAL_LINE_WRITTEN += 1;
 			y++;
 			x = 0;
 		} else {
@@ -72,16 +75,29 @@ int _load_file_(){
 		}
 	};
 
-	tail = tail->prev;
-	tail->next = NULL;
-
-	x = tail->x;
-	x++;
-	y = tail->y;
+	if(tail->prev == NULL){
+		tail = NULL;
+		y = 0;
+		x = 0;
+		TOTAL_LINE_WRITTEN = 0;
+	} else {
+		tail = tail->prev;
+		tail->next = NULL;
+	
+		x = tail->x;
+		y = tail->y;
+		if(tail->data == ENTER){
+			y++;
+			x = 0;
+		} else {
+			x++;
+		};
+		TOTAL_LINE_WRITTEN -= 1;
+	};
 
 	fclose(TARGET);
 	return 0;
-}
+};
 
 int load_buffer(){
 	bool does_exist = INPUT_FILE_PATH();
