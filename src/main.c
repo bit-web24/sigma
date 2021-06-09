@@ -53,20 +53,7 @@ ASCII_RELOAD:
 	WINDOW *window = newwin(Ymax-1, Xmax, 0, 0);
 	getmaxyx(window, Ywin, Xwin);
 
-	// Loading file text into main buffer
-	if(ARGV[1] == NULL){
-		set_statusbar(Xmax, Ymax, x, y);
-	} else {
-		int loaded = load_buffer();
-		lrefresh(window, head);
-		set_statusbar(Xmax, Ymax, x, y);
 
-		if(loaded == -1){
-			// INPUT FILE IS NEW FILE
-		}
-		// INPUT FILE EXISTS
-	};
-	
 	if(zoomed_io == true){
 		if(x-(Xmax-2) > 0){
 			Hscroll(window, head, Xmax, x);
@@ -74,8 +61,28 @@ ASCII_RELOAD:
 		}
 		lrefresh(window, head);
 		wmove(window, y, x);
+		set_statusbar(Xmax, Ymax, x, y);
+		refresh();
 		wrefresh(window);
 	} else{
+		// Loading file text into main buffer
+		if(ARGV[1] == NULL){
+			set_statusbar(Xmax, Ymax, x, y);
+		} else {
+			int loaded = load_buffer();
+			tail = head;
+			x = 0;
+			y = 0;
+			lrefresh(window, head);
+			wmove(window, y, x);
+			set_statusbar(Xmax, Ymax, x, y);
+	
+			if(loaded == -1){
+				// INPUT FILE IS NEW FILE
+			}
+			// INPUT FILE EXISTS
+		};
+	
 		refresh();
 		wrefresh(window);
 		wmove(window, y, x);
