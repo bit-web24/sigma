@@ -72,7 +72,7 @@ if(temp != NULL){
 	X = 0;
 	Y = 0;
 
-	wrefresh(window);
 	refresh();
+	wrefresh(window);
 }
 };
