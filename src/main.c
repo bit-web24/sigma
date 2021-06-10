@@ -71,6 +71,7 @@ ASCII_RELOAD:
 		} else {
 			int loaded = load_buffer();
 			tail = head;
+			atlast = false;
 			x = 0;
 			y = 0;
 			lrefresh(window, head);
