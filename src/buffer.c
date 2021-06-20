@@ -31,11 +31,11 @@ extern void add_new_node(unsigned int input);
 extern int  TOTAL_LINE_WRITTEN; 
 extern struct node *tail;
 
-int  load_buffer();
-int  _load_file_();
-bool INPUT_FILE_PATH();
-FILE *TARGET;
-char INPUT_FILE[250]; 
+int         load_buffer();
+static int  _load_file_();
+static bool INPUT_FILE_PATH();
+FILE        *TARGET;
+char        INPUT_FILE[250] = "NEW"; 
 
 bool INPUT_FILE_PATH(){
 	system("pwd > ../pwd.txt");

@@ -95,6 +95,14 @@ ASCII_RELOAD:
 				zoomed_io = true;
 				goto ASCII_RELOAD;
 				break;
+			case (int) ('x' & 0x1f):
+				int saved = save_to_file();
+				if(saved){
+					endwin();
+					clear();
+					exit(EXIT_SUCCESS);
+				}
+				break;
 		case ENTER:
 		;
 			struct node *new_node = (struct node *) malloc(sizeof(struct node));

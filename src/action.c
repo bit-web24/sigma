@@ -14,26 +14,32 @@
    * along with Sigma.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef MAIN_H
-#define MAIN_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ncurses.h>
 
-struct node *head = NULL;
-struct node *tail = NULL;
+#include "global.h"
 
-unsigned int input;
-int Xmax,
-    Ymax,
-    Xwin,
-    Ywin,
-    x, y;
-bool atlast = true;
-bool zoomed_io = false;
-int  ARGC; char **ARGV;
-int  TOTAL_LINE_WRITTEN;
+extern struct node *head;
+extern FILE        *TARGET;
+extern char        INPUT_FILE[250];
 
-extern void Hscroll(WINDOW *window, struct node *head, int Xmax, int x);
-extern void lrefresh(WINDOW *window, struct node *head);
-extern void set_statusbar(int Xmax, int Ymax, int x, int y);
-extern int  load_buffer();
-extern int  save_to_file();
-#endif
+int save_to_file(){
+	if(strcmp(INPUT_FILE, "NEW") == 0){
+		TARGET = fopen("/home/bittu/new.txt", "w+");
+	} else {
+		TARGET = fopen(INPUT_FILE, "w+");
+	};
+
+	struct node *tmp = head;
+	while(tmp->next != NULL){
+		fprintf(TARGET, "%c", (char) tmp->data);
+		tmp = tmp->next;
+	};
+	
+	fprintf(TARGET, "%c", (char) tmp->data);
+	fclose(TARGET);
+	return 1;
+}
