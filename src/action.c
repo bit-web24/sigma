@@ -26,6 +26,11 @@ extern struct node *head;
 extern FILE        *TARGET;
 extern char        INPUT_FILE[250];
 
+int  save_to_file();
+int  perform_required_action();
+void display_required_status(WINDOW *window, int Xmax, int Ymax);
+void invoke_actions(char action[2]);
+
 int save_to_file(){
 	if(strcmp(INPUT_FILE, "NEW") == 0){
 		TARGET = fopen("/home/bittu/new.txt", "w+");
@@ -42,4 +47,49 @@ int save_to_file(){
 	fprintf(TARGET, "%c", (char) tmp->data);
 	fclose(TARGET);
 	return 1;
+}
+
+
+int perform_required_action(){
+	uint32_t input;
+	char     action[2];
+
+	action[0] = '-';
+	action[1] = '-';
+	action[2] = '-';
+
+	for(int x = 0; x < 3; x++){
+		input = getch();
+		if(input == 0){
+			return 0;
+		}
+		if(input == ENTER || input == KEY_ENTER){
+			// verify and invoke actions
+			invoke_actions(action);
+		}
+		action[x] = (char) input;
+	};
+
+	return 1;
+}
+
+
+void display_required_status(WINDOW *window, int Xmax, int Ymax){
+
+}
+
+void invoke_actions(char action[2]){
+	if(strncmp(action, "w--", 3) == 0){
+		int saved = save_to_file();
+		if(saved){
+			//do nothing...
+		}
+	} else if(strncmp(action, "wq-", 3) == 0){
+		int saved = save_to_file();
+		if(saved){
+			endwin();
+			clear();
+		}
+	} else{
+	}
 }

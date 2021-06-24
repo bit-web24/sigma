@@ -29,17 +29,40 @@
 #define ZOOM_IO 410
 #endif
 
-#ifndef BUFFER_LOADED
-#define BUFFER_LOADED 0
-#endif
-
-
 struct node {
 	struct node *prev;
 	unsigned int data;
 	int x;
 	int y;
 	struct node *next;
+};
+
+enum FILE_ACTIONS{
+	SAVED,
+	NSAVED,
+
+	DIFFY,
+	DIFFN,
+
+	LOADED,
+	NLOADED,
+
+	NEW,
+	OLD,
+
+	YES,
+	NO,
+	
+	NONE
+};
+
+typedef enum FILE_ACTIONS FSTAT;
+struct FILE_INFO {
+       FSTAT FSPEC;
+       FSTAT EXIST_AS;
+       FSTAT LOADING;
+       FSTAT DIFF;
+       FSTAT SAVING;
 };
 
 #endif

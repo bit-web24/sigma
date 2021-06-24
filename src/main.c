@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <errno.h>
 
 #include "global.h"
 #include "main.h"
@@ -48,6 +49,12 @@ int main(int argc, char **argv){
 	head = NULL;
 	tail = NULL;
 	zoomed_io = false;
+
+	fstatus.FSPEC    = NONE;
+	fstatus.EXIST_AS = NONE;
+	fstatus.LOADING  = NONE;
+	fstatus.DIFF     = NONE;
+	fstatus.SAVING   = NONE;
 ASCII_RELOAD:
 	getmaxyx(stdscr, Ymax, Xmax);
 	WINDOW *window = newwin(Ymax-1, Xmax, 0, 0);
@@ -68,6 +75,7 @@ ASCII_RELOAD:
 		// Loading file text into main buffer
 		if(ARGV[1] == NULL){
 			set_statusbar(Xmax, Ymax, x, y);
+			fstatus.FSPEC = NO;
 		} else {
 			int loaded = load_buffer();
 			tail = head;
@@ -80,8 +88,10 @@ ASCII_RELOAD:
 	
 			if(loaded == -1){
 				// INPUT FILE IS NEW FILE
+				fstatus.EXIST_AS = NEW;
 			}
 			// INPUT FILE EXISTS
+			fstatus.EXIST_AS = OLD;
 		};
 	
 		refresh();
@@ -95,13 +105,16 @@ ASCII_RELOAD:
 				zoomed_io = true;
 				goto ASCII_RELOAD;
 				break;
-			case (int) ('x' & 0x1f):
-				int saved = save_to_file();
-				if(saved){
-					endwin();
-					clear();
-					exit(EXIT_SUCCESS);
+			case KEY_F(6):
+				attron(A_REVERSE);
+				mvprintw(Ymax-1, 10, "----");
+				attroff(A_REVERSE);
+
+				int done = perform_required_action();
+				if(done){
+					display_required_status(window, Xmax, Ymax);
 				}
+				//perror("Error: something went wrong!");
 				break;
 		case ENTER:
 		;
