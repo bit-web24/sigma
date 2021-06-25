@@ -22,14 +22,21 @@
 
 #include "global.h"
 
+extern struct FILE_INFO fstatus;
+
 extern struct node *head;
 extern FILE        *TARGET;
 extern char        INPUT_FILE[250];
+extern int         Xmax;
+extern int         Ymax;
+extern WINDOW      *window;
 
 int  save_to_file();
-int  perform_required_action();
+int  perform_required_action(WINDOW *window);
 void display_required_status(WINDOW *window, int Xmax, int Ymax);
-void invoke_actions(char action[2]);
+void invoke_actions(char action[2], WINDOW *window);
+
+char action[2];
 
 int save_to_file(){
 	if(strcmp(INPUT_FILE, "NEW") == 0){
@@ -44,31 +51,37 @@ int save_to_file(){
 		tmp = tmp->next;
 	};
 	
-	fprintf(TARGET, "%c", (char) tmp->data);
+	fprintf(TARGET, "%c\n%c", (char) tmp->data, (char) EOF);
 	fclose(TARGET);
 	return 1;
 }
 
 
-int perform_required_action(){
+int perform_required_action(WINDOW *window){
 	uint32_t input;
-	char     action[2];
+	int      startpos;
 
 	action[0] = '-';
 	action[1] = '-';
 	action[2] = '-';
+	startpos  = 10;
 
 	for(int x = 0; x < 3; x++){
 		input = getch();
-		if(input == 0){
-			return 0;
-		}
 		if(input == ENTER || input == KEY_ENTER){
-			// verify and invoke actions
-			invoke_actions(action);
+			invoke_actions(action, window);
+			return 1;
 		}
 		action[x] = (char) input;
+		mvprintw(Ymax-1, startpos, "%c", action[x]);
+		startpos++;
 	};
+
+complete_action:
+	input = getch();
+	if(input != ENTER){
+		goto complete_action;
+	}
 
 	return 1;
 }
@@ -78,18 +91,37 @@ void display_required_status(WINDOW *window, int Xmax, int Ymax){
 
 }
 
-void invoke_actions(char action[2]){
-	if(strncmp(action, "w--", 3) == 0){
+void invoke_actions(char action[2], WINDOW *window){
+	if(action[0] == '-' && action[1] == '-' && action[2] == '-'){
+		refresh();
+		wrefresh(window);
+	} else if(action[0] == 'w' && action[1] == '-' && action[2] == '-'){
 		int saved = save_to_file();
-		if(saved){
-			//do nothing...
+		if(!saved){
+			exit(EXIT_FAILURE);
+			fstatus.SAVING = NSAVED;
 		}
-	} else if(strncmp(action, "wq-", 3) == 0){
-		int saved = save_to_file();
-		if(saved){
+		fstatus.SAVING = SAVED;
+	} else if(action[0] == 'q' && action[1] == '-' && action[2] == '-'){
+		if(fstatus.SAVING == SAVED){
 			endwin();
 			clear();
+			exit(EXIT_SUCCESS);
 		}
-	} else{
-	}
+		fstatus.SAVING = NSAVED;
+		mvprintw(Ymax-1, 15, "[FILE NOT SAVED]");
+	} else if(action[0] == 'w' && action[1] == 'q' && action[2] == '-'){
+		int saved = save_to_file();
+		if(saved){
+			fstatus.SAVING = SAVED;
+			endwin();
+			clear();
+			exit(EXIT_FAILURE);
+		}
+		fstatus.SAVING = NSAVED;
+	} else if(action[0] == 'q' && action[1] == '!' && action[2] == '-'){
+		endwin();
+		clear();
+		exit(EXIT_SUCCESS);
+	};
 }

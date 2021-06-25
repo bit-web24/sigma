@@ -19,6 +19,7 @@
 
 struct node *head = NULL;
 struct node *tail = NULL;
+struct FILE_INFO  fstatus;
 
 unsigned \
 int    input;
@@ -32,13 +33,12 @@ bool   zoomed_io = false;
 int    ARGC;
 char   **ARGV;
 int    TOTAL_LINE_WRITTEN;
-struct FILE_INFO fstatus;
 
 extern void Hscroll(WINDOW *window, struct node *head, int Xmax, int x);
 extern void lrefresh(WINDOW *window, struct node *head);
 extern void set_statusbar(int Xmax, int Ymax, int x, int y);
 extern int  load_buffer();
 extern int  save_to_file();
-extern int  perform_required_action();
+extern int  perform_required_action(WINDOW *window);
 extern void display_required_status(WINDOW *window, int Xmax, int Ymax);
 #endif

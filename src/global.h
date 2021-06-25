@@ -38,25 +38,26 @@ struct node {
 };
 
 enum FILE_ACTIONS{
-	SAVED,
-	NSAVED,
+	SAVED,		//FOR SAVING
+	NSAVED,		//FOR SAVING
 
-	DIFFY,
-	DIFFN,
+	DIFFY,		//FOR DIFF
+	DIFFN,		//FOR DIFF
 
-	LOADED,
-	NLOADED,
+	LOADED,		//FOR LOADING
+	NLOADED,	//FOR LOADING
 
-	NEW,
-	OLD,
+	NEW,		//FOR EXIST_AS
+	OLD,		//FOR EXIST_AS
 
-	YES,
-	NO,
+	YES,		//FOR FSPEC
+	NO,		//FOR FSPEC 
 	
 	NONE
 };
 
 typedef enum FILE_ACTIONS FSTAT;
+
 struct FILE_INFO {
        FSTAT FSPEC;
        FSTAT EXIST_AS;

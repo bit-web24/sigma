@@ -77,11 +77,14 @@ ASCII_RELOAD:
 			set_statusbar(Xmax, Ymax, x, y);
 			fstatus.FSPEC = NO;
 		} else {
-			int loaded = load_buffer();
-			tail = head;
-			atlast = false;
+			fstatus.FSPEC = YES;
+			int loaded    = load_buffer();
+			tail          = head;
+			atlast        = false;
+
 			x = 0;
 			y = 0;
+
 			lrefresh(window, head);
 			wmove(window, y, x);
 			set_statusbar(Xmax, Ymax, x, y);
@@ -107,12 +110,13 @@ ASCII_RELOAD:
 				break;
 			case KEY_F(6):
 				attron(A_REVERSE);
-				mvprintw(Ymax-1, 10, "----");
+				mvprintw(Ymax-1, 10, "---");
+				move(Ymax-1, 10);
 				attroff(A_REVERSE);
 
-				int done = perform_required_action();
+				int done = perform_required_action(window);
 				if(done){
-					display_required_status(window, Xmax, Ymax);
+					//isplay_required_status(window, Xmax, Ymax);
 				}
 				//perror("Error: something went wrong!");
 				break;
