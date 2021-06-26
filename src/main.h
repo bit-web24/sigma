@@ -40,5 +40,4 @@ extern void set_statusbar(int Xmax, int Ymax, int x, int y);
 extern int  load_buffer();
 extern int  save_to_file();
 extern int  perform_required_action(WINDOW *window);
-extern void display_required_status(WINDOW *window, int Xmax, int Ymax);
 #endif

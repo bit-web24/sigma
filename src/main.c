@@ -109,16 +109,13 @@ ASCII_RELOAD:
 				goto ASCII_RELOAD;
 				break;
 			case KEY_F(6):
+				set_statusbar(Xmax, Ymax, x, y);
 				attron(A_REVERSE);
 				mvprintw(Ymax-1, 10, "---");
 				move(Ymax-1, 10);
 				attroff(A_REVERSE);
-
-				int done = perform_required_action(window);
-				if(done){
-					//isplay_required_status(window, Xmax, Ymax);
-				}
-				//perror("Error: something went wrong!");
+				
+				perform_required_action(window);
 				break;
 		case ENTER:
 		;

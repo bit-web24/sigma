@@ -33,7 +33,6 @@ extern WINDOW      *window;
 
 int  save_to_file();
 int  perform_required_action(WINDOW *window);
-void display_required_status(WINDOW *window, int Xmax, int Ymax);
 void invoke_actions(char action[2], WINDOW *window);
 
 char action[2];
@@ -60,7 +59,7 @@ int save_to_file(){
 int perform_required_action(WINDOW *window){
 	uint32_t input;
 	int      startpos;
-
+take_cmd_again:
 	action[0] = '-';
 	action[1] = '-';
 	action[2] = '-';
@@ -71,24 +70,46 @@ int perform_required_action(WINDOW *window){
 		if(input == ENTER || input == KEY_ENTER){
 			invoke_actions(action, window);
 			return 1;
+		} else if(input == BACKSPACE || input == KEY_BACKSPACE){
+			x = -1;
+			startpos = 10;
+			action[0] = '-';
+			action[1] = '-';
+			action[2] = '-';
+
+			attron(A_REVERSE);
+			mvprintw(Ymax-1, startpos, "---");
+			attroff(A_REVERSE);
+
+			move(Ymax-1, startpos);
+		} else {
+			action[x] = (char) input;
+			mvprintw(Ymax-1, startpos, "%c", action[x]);
+			startpos++;
 		}
-		action[x] = (char) input;
-		mvprintw(Ymax-1, startpos, "%c", action[x]);
-		startpos++;
 	};
 
 complete_action:
 	input = getch();
-	if(input != ENTER){
+	if(input == ENTER){
+		invoke_actions(action, window);
+	} else if(input == BACKSPACE || input == KEY_BACKSPACE){
+		startpos = 10;
+		action[0] = '-';
+		action[1] = '-';
+		action[2] = '-';
+
+		attron(A_REVERSE);
+		mvprintw(Ymax-1, startpos, "---");
+		attroff(A_REVERSE);
+
+		move(Ymax-1, startpos);
+		goto take_cmd_again;
+	} else {
 		goto complete_action;
 	}
 
 	return 1;
-}
-
-
-void display_required_status(WINDOW *window, int Xmax, int Ymax){
-
 }
 
 void invoke_actions(char action[2], WINDOW *window){
@@ -102,6 +123,7 @@ void invoke_actions(char action[2], WINDOW *window){
 			fstatus.SAVING = NSAVED;
 		}
 		fstatus.SAVING = SAVED;
+		mvprintw(Ymax-1, 10, "[FILE SAVED]");
 	} else if(action[0] == 'q' && action[1] == '-' && action[2] == '-'){
 		if(fstatus.SAVING == SAVED){
 			endwin();
@@ -109,7 +131,7 @@ void invoke_actions(char action[2], WINDOW *window){
 			exit(EXIT_SUCCESS);
 		}
 		fstatus.SAVING = NSAVED;
-		mvprintw(Ymax-1, 15, "[FILE NOT SAVED]");
+		mvprintw(Ymax-1, 10, "[FILE NOT SAVED]");
 	} else if(action[0] == 'w' && action[1] == 'q' && action[2] == '-'){
 		int saved = save_to_file();
 		if(saved){
@@ -123,5 +145,7 @@ void invoke_actions(char action[2], WINDOW *window){
 		endwin();
 		clear();
 		exit(EXIT_SUCCESS);
+	} else {
+		mvprintw(Ymax-1, 10, "[CMD NOT FOUND]");
 	};
 }
