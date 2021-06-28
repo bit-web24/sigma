@@ -29,7 +29,10 @@ extern FILE        *TARGET;
 extern char        INPUT_FILE[250];
 extern int         Xmax;
 extern int         Ymax;
+extern int	   x;
+extern int	   y;
 extern WINDOW      *window;
+extern void 	   set_statusbar(int Xmax, int Ymax, int x, int y);
 
 int  save_to_file();
 int  perform_required_action(WINDOW *window);
@@ -116,6 +119,7 @@ void invoke_actions(char action[2], WINDOW *window){
 	if(action[0] == '-' && action[1] == '-' && action[2] == '-'){
 		refresh();
 		wrefresh(window);
+		set_statusbar(Xmax, Ymax, x, y);
 	} else if(action[0] == 'w' && action[1] == '-' && action[2] == '-'){
 		int saved = save_to_file();
 		if(!saved){

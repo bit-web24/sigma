@@ -38,13 +38,14 @@ FILE        *TARGET;
 char        INPUT_FILE[250] = "NEW"; 
 
 bool INPUT_FILE_PATH(){
-	system("pwd > ../pwd.txt");
+	system("pwd > ~/pwd.txt");
 	
 	TARGET = fopen("../pwd.txt", "r");
 	fscanf(TARGET, "%s", INPUT_FILE);
 	fclose(TARGET);
 
 	strcat(INPUT_FILE, "/");
+	// do here
 	strcat(INPUT_FILE, ARGV[1]);
 
 	char check_input_file[258] = "test -e ";
