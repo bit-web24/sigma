@@ -26,8 +26,10 @@ For now, this project is going in a single file only and therefore no configurat
 You can build the source code using the following shell command-
 
 ```bash
-gcc main.c -l ncurses -o sigma
+make sigma
 ```
+
+after building the source code the binary will have stored in the bin/ directory of the current directory.
 
 # Contributions
 This project is waiting for you contributions. If you are interesed in this project you can contribute here by commiting code patches, documentations/wiki or by fixing bugs and issues.
@@ -36,11 +38,11 @@ This project is waiting for you contributions. If you are interesed in this proj
 To make actual code changes, you must have the knowledge of following language, tools and libraries.
 
 1. C/C++
-2. ncurses
+2. Ncurses
 3. Data Structures and Algorithms
-4. gcc compiler
 5. Git and Github
-6. a little more shell scripting
+6. Shell Scripting
+7. Makefile
 
 If you are going to contribute to `sigma text-editor`, make sure you are making patches on a different branch. And also send the pull request if and only if the current patches are not affecting previous features and should also work properly.
 
