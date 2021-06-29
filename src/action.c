@@ -37,16 +37,66 @@ extern void 	   set_statusbar(int Xmax, int Ymax, int x, int y);
 int  save_to_file();
 int  perform_required_action(WINDOW *window);
 void invoke_actions(char action[2], WINDOW *window);
-
+void get_filename();
+void clear_statusbar();
 char action[2];
 
+void clear_statusbar(){
+	attron(A_REVERSE);
+	for(int z = 0; z < Xmax-1; z++){
+		mvprintw(Ymax-1, z, " ");
+	};
+	attroff(A_REVERSE);
+}
+
+void get_filename(){
+	uint32_t input;
+	uint32_t cntr;
+	
+	cntr = 0;
+	for(int i = 0; i < Xmax; i++){
+		input = getch();
+		if(input == ENTER || input == KEY_ENTER){
+			INPUT_FILE[cntr] = '\0';
+			set_statusbar(Xmax, Ymax, x, y);
+			break;
+		} else if(input == BACKSPACE || input == KEY_BACKSPACE){
+			cntr -= 1;
+			INPUT_FILE[cntr] = '\0';
+			mvdelch(Ymax, cntr);
+			move(Ymax, cntr);
+		} else if(input == KEY_UP   || input == KEY_DOWN){
+			// DO NOTHING!
+		} else {
+			INPUT_FILE[cntr] = (char) input;
+
+			attron(A_REVERSE);
+			mvprintw(Ymax-1, cntr, "%c", (char) input);
+			attron(A_REVERSE);
+			
+			cntr += 1;
+			move(Ymax, cntr);
+		}
+	};
+}
+
 int save_to_file(){
-	if(strcmp(INPUT_FILE, "NEW") == 0){
-		TARGET = fopen("/home/bittu/new.txt", "w+");
+	uint32_t input;
+	uint32_t cntr;	
+
+	if(fstatus.FSPEC == NO){
+		clear_statusbar();
+		move(Ymax-1, 0);
+		get_filename();
+		TARGET = fopen(INPUT_FILE, "w+");
 	} else {
 		TARGET = fopen(INPUT_FILE, "w+");
 	};
 
+	if(head == NULL){
+		fprintf(TARGET, "%c", (char) EOF);
+		return 1;
+	}
 	struct node *tmp = head;
 	while(tmp->next != NULL){
 		fprintf(TARGET, "%c", (char) tmp->data);
@@ -127,14 +177,14 @@ void invoke_actions(char action[2], WINDOW *window){
 			fstatus.SAVING = NSAVED;
 		}
 		fstatus.SAVING = SAVED;
+		fstatus.FSPEC  = YES; 
 		mvprintw(Ymax-1, 10, "[FILE SAVED]");
 	} else if(action[0] == 'q' && action[1] == '-' && action[2] == '-'){
-		if(fstatus.SAVING == SAVED){
+		if(fstatus.SAVING == SAVED || fstatus.SAVING == NONE){
 			endwin();
 			clear();
 			exit(EXIT_SUCCESS);
 		}
-		fstatus.SAVING = NSAVED;
 		mvprintw(Ymax-1, 10, "[FILE NOT SAVED]");
 	} else if(action[0] == 'w' && action[1] == 'q' && action[2] == '-'){
 		int saved = save_to_file();

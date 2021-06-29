@@ -35,7 +35,7 @@ int         load_buffer();
 static int  _load_file_();
 static bool INPUT_FILE_PATH();
 FILE        *TARGET;
-char        INPUT_FILE[250] = "NEW"; 
+char        INPUT_FILE[250]; 
 
 bool INPUT_FILE_PATH(){
 	system("pwd > ~/pwd.txt");
@@ -45,8 +45,10 @@ bool INPUT_FILE_PATH(){
 	fclose(TARGET);
 
 	strcat(INPUT_FILE, "/");
-	// do here
-	strcat(INPUT_FILE, ARGV[1]);
+	if (ARGV[1][0] == '/')
+		strcpy(INPUT_FILE, ARGV[1]);
+	else
+		strcat(INPUT_FILE, ARGV[1]);
 
 	char check_input_file[258] = "test -e ";
 	strcat(check_input_file, INPUT_FILE);

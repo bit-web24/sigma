@@ -173,7 +173,8 @@ ASCII_RELOAD:
 				x = 0;
 				y += 1;
 				TOTAL_LINE_WRITTEN += 1;
-				
+
+				fstatus.SAVING = NSAVED;	
 				lrefresh(window, head);
 				wmove(window, y, x);
 				set_statusbar(Xmax, Ymax, x, y);
@@ -323,7 +324,7 @@ rmchar:
 						};
 					};
 				};
-					
+					fstatus.SAVING = NSAVED;
 				} else{
 					if(atlast == true){
 						free(tail);
@@ -339,6 +340,8 @@ rmchar:
 					} else{
 						break;
 					};
+
+					fstatus.SAVING = NSAVED;
 				};
 
 				break;
@@ -528,12 +531,14 @@ rmchar:
 			default:
 				if(x > Xmax-2){
 					add_new_node(input);
+					fstatus.SAVING = NSAVED;
 					wclear(window);
 					Hscroll(window, head, Xmax, x);
 					x += 1;
 					wmove(window, y, Xmax-1);
 				} else {
 					add_new_node(input);
+					fstatus.SAVING = NSAVED;
 					x += 1;
 	
 					lrefresh(window, head);

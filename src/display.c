@@ -21,6 +21,7 @@
 extern int ARGC;
 extern char **ARGV;
 extern int TOTAL_LINE_WRITTEN;
+extern int INPUT_FILE[250];
 
 void set_statusbar(int Xmax, int Ymax, int x, int y);
 void lrefresh(WINDOW *window, struct node *head);
@@ -31,11 +32,10 @@ void set_statusbar(int Xmax, int Ymax, int x, int y){
 		mvprintw(Ymax-1, i, " ");
 	};
 
-	if(ARGV[1] != NULL) {
-		mvprintw(Ymax-1, 1, "\"%s\"", ARGV[1]);
-	} else {
-		mvprintw(Ymax-1, 1, "\"NEW\"");
-	};
+	if(INPUT_FILE[0] == '\0')
+		mvprintw(Ymax-1, 1, "\"NULL\"");
+	else
+		mvprintw(Ymax-1, 1, "\"%s\"", INPUT_FILE);
 
 	mvprintw(Ymax-1, (Xmax)/2, "(%d,%d)", y, x);
 	mvprintw(Ymax-1, (Xmax-4), "[%d]", TOTAL_LINE_WRITTEN);
