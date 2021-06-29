@@ -116,7 +116,7 @@ take_cmd_again:
 	action[0] = '-';
 	action[1] = '-';
 	action[2] = '-';
-	startpos  = 10;
+	startpos  = (Xmax-4)/2;
 
 	for(int x = 0; x < 3; x++){
 		input = getch();
@@ -147,7 +147,7 @@ complete_action:
 	if(input == ENTER){
 		invoke_actions(action, window);
 	} else if(input == BACKSPACE || input == KEY_BACKSPACE){
-		startpos = 10;
+		startpos = (Xmax-4)/2;
 		action[0] = '-';
 		action[1] = '-';
 		action[2] = '-';
@@ -200,6 +200,7 @@ void invoke_actions(char action[2], WINDOW *window){
 		clear();
 		exit(EXIT_SUCCESS);
 	} else {
+		set_statusbar(Xmax, Ymax, x, y);
 		mvprintw(Ymax-1, 10, "[CMD NOT FOUND]");
 	};
 }

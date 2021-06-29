@@ -109,10 +109,10 @@ ASCII_RELOAD:
 				goto ASCII_RELOAD;
 				break;
 			case KEY_F(6):
-				set_statusbar(Xmax, Ymax, x, y);
+				clear_statusbar();
 				attron(A_REVERSE);
-				mvprintw(Ymax-1, 10, "---");
-				move(Ymax-1, 10);
+				mvprintw(Ymax-1, (Xmax-4)/2, "---");
+				move(Ymax-1, (Xmax-4)/2);
 				attroff(A_REVERSE);
 				
 				perform_required_action(window);

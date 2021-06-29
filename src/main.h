@@ -37,6 +37,7 @@ int    TOTAL_LINE_WRITTEN;
 extern void Hscroll(WINDOW *window, struct node *head, int Xmax, int x);
 extern void lrefresh(WINDOW *window, struct node *head);
 extern void set_statusbar(int Xmax, int Ymax, int x, int y);
+extern void clear_statusbar();
 extern int  load_buffer();
 extern int  save_to_file();
 extern int  perform_required_action(WINDOW *window);
