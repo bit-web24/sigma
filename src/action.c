@@ -178,14 +178,14 @@ void invoke_actions(char action[2], WINDOW *window){
 		}
 		fstatus.SAVING = SAVED;
 		fstatus.FSPEC  = YES; 
-		mvprintw(Ymax-1, 10, "[FILE SAVED]");
+		mvprintw(Ymax-1, (Xmax-12)/2, "[FILE SAVED]");
 	} else if(action[0] == 'q' && action[1] == '-' && action[2] == '-'){
 		if(fstatus.SAVING == SAVED || fstatus.SAVING == NONE){
 			endwin();
 			clear();
 			exit(EXIT_SUCCESS);
 		}
-		mvprintw(Ymax-1, 10, "[FILE NOT SAVED]");
+		mvprintw(Ymax-1, (Xmax-16)/2, "[FILE NOT SAVED]");
 	} else if(action[0] == 'w' && action[1] == 'q' && action[2] == '-'){
 		int saved = save_to_file();
 		if(saved){
@@ -201,6 +201,6 @@ void invoke_actions(char action[2], WINDOW *window){
 		exit(EXIT_SUCCESS);
 	} else {
 		set_statusbar(Xmax, Ymax, x, y);
-		mvprintw(Ymax-1, 10, "[CMD NOT FOUND]");
+		mvprintw(Ymax-1, (Xmax-15)/2, "[CMD NOT FOUND]");
 	};
 }
