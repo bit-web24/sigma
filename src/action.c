@@ -37,7 +37,7 @@ extern void 	   set_statusbar(int Xmax, int Ymax, int x, int y);
 int  save_to_file();
 int  perform_required_action(WINDOW *window);
 void invoke_actions(char action[2], WINDOW *window);
-void get_filename();
+void get_filename(char *FILENAME);
 void clear_statusbar();
 char action[2];
 
@@ -49,33 +49,36 @@ void clear_statusbar(){
 	attroff(A_REVERSE);
 }
 
-void get_filename(){
+void get_filename(char *FILENAME){
 	uint32_t input;
 	uint32_t cntr;
 	
+	attron(A_REVERSE);
+	mvprintw(Ymax-1, 1, "%s", FILENAME);
+	attroff(A_REVERSE);
+	
 	cntr = 0;
-	for(int i = 0; i < Xmax; i++){
+	for(int i = 11 ; i < Xmax; i++){
 		input = getch();
 		if(input == ENTER || input == KEY_ENTER){
 			INPUT_FILE[cntr] = '\0';
 			set_statusbar(Xmax, Ymax, x, y);
 			break;
 		} else if(input == BACKSPACE || input == KEY_BACKSPACE){
-			cntr -= 1;
-			INPUT_FILE[cntr] = '\0';
-			mvdelch(Ymax, cntr);
-			move(Ymax, cntr);
-		} else if(input == KEY_UP   || input == KEY_DOWN){
-			// DO NOTHING!
+			strcpy(INPUT_FILE, "");
+			clear_statusbar();
+			return get_filename("FILENAME: ");
+		} else if(input == KEY_UP   || input == KEY_DOWN || input == KEY_UP || input == KEY_DOWN){
+			continue;
 		} else {
 			INPUT_FILE[cntr] = (char) input;
 
 			attron(A_REVERSE);
-			mvprintw(Ymax-1, cntr, "%c", (char) input);
+			mvprintw(Ymax-1, i, "%c", (char) input);
 			attron(A_REVERSE);
 			
 			cntr += 1;
-			move(Ymax, cntr);
+			move(Ymax, i+1);
 		}
 	};
 }
@@ -87,7 +90,7 @@ int save_to_file(){
 	if(fstatus.FSPEC == NO){
 		clear_statusbar();
 		move(Ymax-1, 0);
-		get_filename();
+		get_filename("FILENAME: ");
 		TARGET = fopen(INPUT_FILE, "w+");
 	} else {
 		TARGET = fopen(INPUT_FILE, "w+");
@@ -103,7 +106,7 @@ int save_to_file(){
 		tmp = tmp->next;
 	};
 	
-	fprintf(TARGET, "%c\n%c", (char) tmp->data, (char) EOF);
+	fprintf(TARGET, "%c%c", (char) tmp->data, (char) EOF);
 	fclose(TARGET);
 	return 1;
 }
@@ -112,6 +115,7 @@ int save_to_file(){
 int perform_required_action(WINDOW *window){
 	uint32_t input;
 	int      startpos;
+
 take_cmd_again:
 	action[0] = '-';
 	action[1] = '-';
@@ -125,7 +129,7 @@ take_cmd_again:
 			return 1;
 		} else if(input == BACKSPACE || input == KEY_BACKSPACE){
 			x = -1;
-			startpos = 10;
+			startpos = (Xmax-4)/2;
 			action[0] = '-';
 			action[1] = '-';
 			action[2] = '-';
@@ -135,6 +139,9 @@ take_cmd_again:
 			attroff(A_REVERSE);
 
 			move(Ymax-1, startpos);
+		} else if(input == KEY_UP || input == KEY_DOWN || input == KEY_UP || input == KEY_DOWN){
+			x -= 1;
+			continue;
 		} else {
 			action[x] = (char) input;
 			mvprintw(Ymax-1, startpos, "%c", action[x]);
