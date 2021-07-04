@@ -20,11 +20,14 @@
 
 void Hscroll(WINDOW *window, struct node *head, int Xmax, int x){
 	unsigned int X, Y, cntr;
-	X = 0;
-	Y = 0;
+	unsigned int abs_X;
 	bool is_enter = false;
 	bool is_last = false;
+	
+	X = 0;
+	Y = 0;
 	cntr = x-(Xmax-2);
+	abs_X= 0;
 	
 	struct node *scrollh = head;
 	for(int i = 0; i < cntr; i++){
@@ -39,10 +42,12 @@ void Hscroll(WINDOW *window, struct node *head, int Xmax, int x){
 		if(scrollh->data != ENTER){
 			mvwprintw(window, Y, X, "%c", (char) scrollh->data);
 			X += 1;
+			abs_X += 1;
 		} else {
 			mvwprintw(window, Y, X, "%c", (char) scrollh->data);
 			X = 0;
 			Y += 1;
+			abs_X = 0;
 			for(int i = 0; i < cntr; i++){
 				/**
 				 * the condition solves the problem of over iteration of
@@ -56,6 +61,7 @@ void Hscroll(WINDOW *window, struct node *head, int Xmax, int x){
 						is_enter = true;
 						break;
 					}
+					abs_X += 1; 
 					continue;
 				} else {
 					is_last = true;
@@ -75,6 +81,7 @@ void Hscroll(WINDOW *window, struct node *head, int Xmax, int x){
 
 		if(scrollh->next != NULL){
 			scrollh = scrollh->next;
+			abs_X += 1;
 		} else {
 			break;
 		};
@@ -84,7 +91,8 @@ void Hscroll(WINDOW *window, struct node *head, int Xmax, int x){
 	if(is_last == true){
 		is_last = false;
 	} else {
-		mvwprintw(window, Y, X, "%c", (char) scrollh->data);
+		if(x-(Xmax-2) < abs_X)
+			mvwprintw(window, Y, X, "%c", (char) scrollh->data);
 	};
 
 	X = 0;
