@@ -3,7 +3,8 @@ An extreme lightweight text-editor built with `C programming language` and the `
 Although there are many text editors available for the linux system like: Vim, Nano, Pico, etc. but their user experience is not too good.
 I know everyone can master on using vim after using it for a long time. But if you are focusing on your project and don't want to learn and remmember the vim commands and key bindings but also want to stay on the command-line, then they are not too good for that purpose.
 
-![sigma_text-editor](https://user-images.githubusercontent.com/62652273/117762885-8cd31d00-b247-11eb-84c7-3ddfeafc9c93.gif)
+![Sigma-load](https://user-images.githubusercontent.com/62652273/124428214-0a1f9780-dd8a-11eb-8f12-0d91f75c02f1.png)
+
 
 Sigma text-edior is under developement and no pre-releases are released yet, but it is going to focus on the following features.
 
@@ -51,8 +52,8 @@ If you are going to contribute to `sigma text-editor`, make sure you are making 
 # Screenshots
 
 1. Sigma in small screen
-![sigma-text-editor_smallscreen](https://user-images.githubusercontent.com/62652273/117762947-a1171a00-b247-11eb-9ce7-a22bfb857f8b.png)
-2. sigma in long screen
-![sigma-text-editor_midium](https://user-images.githubusercontent.com/62652273/117762965-a6746480-b247-11eb-89e2-57ce6f7b656e.png)
-3. sigma in full screen
-![sigma-text-editor_fullscreen](https://user-images.githubusercontent.com/62652273/117762977-abd1af00-b247-11eb-8f90-215e14b37651.png)
+![sigma-new-with-filename](https://user-images.githubusercontent.com/62652273/124428304-27ecfc80-dd8a-11eb-9f19-f5bdf962bd58.png)
+
+2. sigma in full screen
+![Sigma-new](https://user-images.githubusercontent.com/62652273/124428254-16a3f000-dd8a-11eb-909b-3f5d6979024b.png)
+
