@@ -95,7 +95,6 @@ int _load_file_(){
 		} else {
 			x++;
 		};
-		TOTAL_LINE_WRITTEN -= 1;
 	};
 
 	fclose(TARGET);
