@@ -111,10 +111,5 @@ int load_buffer(){
 		}
 		exit(EXIT_FAILURE);
 	}
-	TARGET = fopen(INPUT_FILE, "w");
-	if(TARGET != NULL){
-		fclose(TARGET);
-		return -1;
-	}
-	exit(EXIT_FAILURE);
+	return -1;
 };

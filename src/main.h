@@ -34,6 +34,8 @@ int    ARGC;
 char   **ARGV;
 int    TOTAL_LINE_WRITTEN;
 
+extern int INPUT_FILE[250];
+
 extern void Hscroll(WINDOW *window, struct node *head, int Xmax, int x);
 extern void lrefresh(WINDOW *window, struct node *head);
 extern void set_statusbar(int Xmax, int Ymax, int x, int y);

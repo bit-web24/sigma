@@ -71,6 +71,7 @@ ASCII_RELOAD:
 		set_statusbar(Xmax, Ymax, x, y);
 		refresh();
 		wrefresh(window);
+		zoomed_io = false;
 	} else{
 		// Loading file text into main buffer
 		if(ARGV[1] == NULL){
@@ -78,23 +79,27 @@ ASCII_RELOAD:
 			fstatus.FSPEC = NO;
 		} else {
 			fstatus.FSPEC = YES;
-			int loaded    = load_buffer();
-			tail          = head;
-			atlast        = false;
+			for(int i = 0; i < strlen(ARGV[1]); i++)
+				INPUT_FILE[i] = (int) ARGV[1][i];
+			INPUT_FILE[strlen(ARGV[1])] = (int) '\0';
 
-			x = 0;
-			y = 0;
+			int loaded = load_buffer();
+			         x = 0;
+			         y = 0;
 
-			lrefresh(window, head);
-			wmove(window, y, x);
-			set_statusbar(Xmax, Ymax, x, y);
-	
-			if(loaded == -1){
+			if(loaded == 0){
+				// INPUT FILE EXISTS
+				tail             = head;
+				atlast           = false;
+				fstatus.EXIST_AS = OLD;
+				lrefresh(window, head);
+				wmove(window, y, x);
+				set_statusbar(Xmax, Ymax, x, y);
+			} else {
 				// INPUT FILE IS NEW FILE
 				fstatus.EXIST_AS = NEW;
+				set_statusbar(Xmax, Ymax, x, y);
 			}
-			// INPUT FILE EXISTS
-			fstatus.EXIST_AS = OLD;
 		};
 	
 		refresh();
