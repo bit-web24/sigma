@@ -43,7 +43,7 @@ char action[2];
 
 void clear_statusbar(){
 	attron(A_REVERSE);
-	for(int z = 0; z < Xmax-1; z++){
+	for(int z = 0; z <= Xmax-2; z++){
 		mvprintw(Ymax-1, z, " ");
 	};
 	attroff(A_REVERSE);
@@ -52,17 +52,19 @@ void clear_statusbar(){
 void get_filename(char *FILENAME){
 	uint32_t input;
 	uint32_t cntr;
+	bool signal = false;
 	
 	attron(A_REVERSE);
 	mvprintw(Ymax-1, 1, "%s", FILENAME);
 	attroff(A_REVERSE);
 	
 	cntr = 0;
-	for(int i = 11 ; i < Xmax; i++){
+	for(int i = 11 ; i < Xmax-1; i++){
 		input = getch();
 		if(input == ENTER || input == KEY_ENTER){
 			INPUT_FILE[cntr] = '\0';
 			set_statusbar(Xmax, Ymax, x, y);
+			signal = true;
 			break;
 		} else if(input == BACKSPACE || input == KEY_BACKSPACE){
 			strcpy(INPUT_FILE, "");
@@ -80,6 +82,22 @@ void get_filename(char *FILENAME){
 			cntr += 1;
 			move(Ymax, i+1);
 		}
+	};
+
+	if(signal == true){
+		//don't do any thing
+	} else {
+wait_for_enter:
+		input = getch();
+		if(input == KEY_ENTER || input == ENTER){
+			//Don't do anything
+		} else if(input == BACKSPACE || input == KEY_BACKSPACE){
+			strcpy(INPUT_FILE, "");
+			clear_statusbar();
+			return get_filename("FILENAME: ");
+		} else {
+			goto wait_for_enter;
+		};
 	};
 }
 
