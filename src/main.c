@@ -351,11 +351,50 @@ rmchar:
 
 				break;
 			case KEY_DOWN:
-				y += 1;
-				if(y > Ywin-1){
-					y = Ywin-1;
-					wmove(window, y, x);
+				if(tail == NULL){
+					break;
 				}
+
+				uint32_t cpos      = x;
+				bool     noNewLine = false;
+				struct   node *tmp = tail;
+
+				while(tail->data != ENTER){
+					if(tail->next == NULL){
+						tail = tmp;
+						x = cpos;
+						noNewLine = true;
+						break;
+					}
+					tail = tail->next;
+					x += 1;
+				};
+
+				if(noNewLine){
+					noNewLine = false;
+					break;
+				} else {
+					x =  0;
+					y += 1;
+					tail = tail->next;
+
+					for(int pos = 0; pos < cpos; pos++){
+						if(tail->next == NULL){
+							noNewLine = true;
+							break;
+						} else if(tail->data == ENTER || tail->data == KEY_ENTER){
+							noNewLine = true;
+							break;
+						} else{
+							tail = tail->next;
+							x += 1;
+						};
+					};
+
+					if(!noNewLine)
+						x = cpos;
+				};
+
 				wmove(window, y, x);
 				set_statusbar(Xmax, Ymax, x, y);
 				break;

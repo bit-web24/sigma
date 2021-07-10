@@ -101,3 +101,6 @@ void Hscroll(WINDOW *window, struct node *head, int Xmax, int x){
 	wrefresh(window);
 	refresh();
 };
+
+void Vscroll(WINDOW *window, struct node *head){
+}
